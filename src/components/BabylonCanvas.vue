@@ -25,7 +25,7 @@ export default {
       const scene = new BABYLON.Scene(engine);
 
       // This creates and positions a free camera (non-mesh)
-      const camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 1.75, 0), scene);
+      const camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 1.75, 0), scene);
 
       // This targets the camera to scene origin
 
@@ -41,12 +41,6 @@ export default {
       point_light_b.intensity = 0.7
       // Default intensity is 1. Let's dim the light a small amount
       // light.intensity = 0.0;
-      const human = BABYLON.MeshBuilder.CreateCylinder('human', {diameter: 0.5, height: 1.8}, scene);
-      human.position.x = 2;
-      human.position.z = 1.5;
-      human.position.y = 0.9;
-
-      camera.setTarget(human.position);
 
       const wall_a = BABYLON.MeshBuilder.CreateBox('walls', {height: 4.0, width: 4.6, depth: 0.1});
       const wall_b = BABYLON.MeshBuilder.CreateBox('walls', {height: 4.0, width: 4.6, depth: 0.1});
@@ -97,8 +91,35 @@ export default {
                   new BABYLON.Vector3(pointerInfo.pickInfo.pickedPoint.x, camera.position.y, pointerInfo.pickInfo.pickedPoint.z),
                   new BABYLON.Vector3(0,0,-1)))
 
-          camera.position.x = Math.max(Math.min(wall_pos_x.pickedPoint.x - 2 * camera.minZ, pointerInfo.pickInfo.pickedPoint.x), wall_neg_x.pickedPoint.x + 2 * camera.minZ)
-          camera.position.z = Math.max(Math.min(wall_pos_z.pickedPoint.z - 2 * camera.minZ, pointerInfo.pickInfo.pickedPoint.z), wall_neg_z.pickedPoint.z + 2 * camera.minZ)
+          const newCameraX= Math.max(Math.min(wall_pos_x.pickedPoint.x - 1.5 * camera.minZ, pointerInfo.pickInfo.pickedPoint.x), wall_neg_x.pickedPoint.x + 1.5 * camera.minZ)
+          const newCameraZ = Math.max(Math.min(wall_pos_z.pickedPoint.z - 1.5 * camera.minZ, pointerInfo.pickInfo.pickedPoint.z), wall_neg_z.pickedPoint.z + 1.5 * camera.minZ)
+
+          const animationcamera = new BABYLON.Animation(
+              "camera",
+              "position",
+              60,
+              BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+              BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+          );
+
+          const keys = [];
+
+          keys.push({
+            frame: 0,
+            value: camera.position.clone()
+          });
+
+          keys.push({
+            frame: 20,
+            value: new BABYLON.Vector3(newCameraX, camera.position.y, newCameraZ),
+          });
+
+          animationcamera.setKeys(keys);
+          camera.animations = [];
+
+          camera.animations.push(animationcamera);
+
+          scene.beginAnimation(camera, 0, 20, false, 1);
         }
       })
       ground.actionManager.registerAction(
