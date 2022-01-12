@@ -33,6 +33,7 @@ export default {
   width: 20%;
   background: antiquewhite;
   opacity: 70%;
+  padding: 20px;
 }
 
 
