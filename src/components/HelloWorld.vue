@@ -2,22 +2,25 @@
   <div class="hello">
     <h4>{{ msg }}</h4>
     <div id="view_wrapper">
-      <artwork-info></artwork-info>
+      <artwork-list></artwork-list>
       <babylon-canvas></babylon-canvas>
     </div>
   </div>
 </template>
 
 <script>
-import BabylonCanvas from "@/components/BabylonCanvas";
-import ArtworkInfo from "@/components/ArtworkInfo";
+import
+  BabylonCanvas from "@/components/BabylonCanvas";
+  import ArtworkList from "@/components/ArtworkList";
+
 export default {
   name: 'HelloWorld',
-  components: {ArtworkInfo, BabylonCanvas},
+  components: {ArtworkList, BabylonCanvas},
   props: {
     msg: String
   }
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
