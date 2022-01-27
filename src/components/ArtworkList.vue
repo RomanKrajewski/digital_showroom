@@ -1,8 +1,11 @@
 <template>
-  <div id="info_wrapper">
-    <artwork-info v-for="artwork in artworks" :key="artwork.id" :artwork_id="artwork.id">
-    </artwork-info>
-  </div>
+   <v-col cols="4" id="root">
+      <v-row >
+        <v-col v-for="artwork in artworks" :key="artwork.id" cols="12">
+          <artwork-info :artwork_id="artwork.id"></artwork-info>
+        </v-col>
+      </v-row>
+   </v-col>
 </template>
 
 <script>
@@ -19,13 +22,10 @@ export default {
 </script>
 
 <style scoped>
-#info_wrapper{
+#root{
   position: fixed;
-  top: 10px;
-  right: 10px;
-  width: 20%;
-  background: antiquewhite;
-  opacity: 70%;
-  padding: 20px;
+  right: 0;
+  background: white;
+  background-opacity: 0.5;
 }
 </style>

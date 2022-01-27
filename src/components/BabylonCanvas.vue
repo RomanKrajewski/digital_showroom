@@ -14,7 +14,7 @@ export default {
   data: function () {
     return {
       engine: null,
-      debug_message: 'hello'
+      debug_message: ''
     }
   },
   methods: {
