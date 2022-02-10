@@ -5,10 +5,10 @@ class TeleportingCamera {
     constructor(scene, canvas) {
 
         this.scene = scene;
-        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 1.75, 0),this.scene);
+        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 1, 0),this.scene);
 
         this.camera.attachControl(canvas, true);
-
+        this.camera.minZ = 0.1
     }
     
     teleport(pointerInfo){
@@ -28,9 +28,9 @@ class TeleportingCamera {
             new BABYLON.Ray(
                 new BABYLON.Vector3(pointerInfo.pickInfo.pickedPoint.x,this.camera.position.y, pointerInfo.pickInfo.pickedPoint.z),
                 new BABYLON.Vector3(0,0,-1)))
-
-        const newCameraX= Math.max(Math.min(wall_pos_x.pickedPoint.x - 1.5 *this.camera.minZ, pointerInfo.pickInfo.pickedPoint.x), wall_neg_x.pickedPoint.x + 1.5 *this.camera.minZ)
-        const newCameraZ = Math.max(Math.min(wall_pos_z.pickedPoint.z - 1.5 *this.camera.minZ, pointerInfo.pickInfo.pickedPoint.z), wall_neg_z.pickedPoint.z + 1.5 *this.camera.minZ)
+        const distance_factor = 1.5
+        const newCameraX= Math.max(Math.min(wall_pos_x.pickedPoint.x - distance_factor * this.camera.minZ, pointerInfo.pickInfo.pickedPoint.x), wall_neg_x.pickedPoint.x + distance_factor * this.camera.minZ)
+        const newCameraZ = Math.max(Math.min(wall_pos_z.pickedPoint.z - distance_factor * this.camera.minZ, pointerInfo.pickInfo.pickedPoint.z), wall_neg_z.pickedPoint.z + distance_factor * this.camera.minZ)
 
         const animationcamera = new BABYLON.Animation(
             "camera",

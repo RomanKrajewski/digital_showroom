@@ -11,8 +11,9 @@ class Ground{
         move_indicator.material = move_indicator_material
         // Our built-in 'ground' shape.
 
-        const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 4.6, height: 10.0}, scene);
-        ground.material = this.getGroundMaterial(scene)
+        // const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 4.6, height: 10.0}, scene);
+        // ground.material = this.getGroundMaterial(scene)
+        const ground = scene.getMeshByName('floor_Baked')
         ground.actionManager = new BABYLON.ActionManager(scene);
 
         ground.actionManager.registerAction(
@@ -31,10 +32,5 @@ class Ground{
                 function () {move_indicator.setEnabled(false)}))
     }
 
-    getGroundMaterial(scene){
-        const ground_material = new BABYLON.StandardMaterial("ground_material", scene)
-        ground_material.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5)
-        return ground_material
-    }
 }
 export {Ground}
