@@ -3,9 +3,9 @@
       <v-container fluid>
         <v-row>
           <v-col cols="12">
-              <babylon-canvas></babylon-canvas>
+              <babylon-canvas :debug-message="debugMessage" :positioning-artwork="positioningArtwork"></babylon-canvas>
           </v-col>
-          <artwork-list v-if="show_navigation"></artwork-list>
+          <artwork-list @positioning="initPositioningArtwork" v-if="show_navigation"></artwork-list>
         </v-row>
       </v-container>
   </div>
@@ -19,7 +19,19 @@ export default {
 
   name: 'Main',
   components: {ArtworkList, BabylonCanvas},
-  props:['show_navigation']
+  props:['show_navigation'],
+  data: function (){
+    return {
+      debugMessage: 'initial',
+      positioningArtwork: null,
+    }
+  },
+  methods: {
+    initPositioningArtwork: function (artwork){
+      this.debugMessage = artwork.name
+    }
+  }
+
 }
 
 </script>

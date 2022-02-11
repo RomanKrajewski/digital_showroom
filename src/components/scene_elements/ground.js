@@ -11,17 +11,17 @@ class Ground{
         move_indicator.material = move_indicator_material
         // Our built-in 'ground' shape.
 
-        // const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 4.6, height: 10.0}, scene);
-        // ground.material = this.getGroundMaterial(scene)
         const ground = scene.getMeshByName('floor_Baked')
-        ground.actionManager = new BABYLON.ActionManager(scene);
+        ground.actionManager = new BABYLON.ActionManager(scene)
 
         ground.actionManager.registerAction(
             new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
                 function () {move_indicator.setEnabled(true)}))
         scene.onPointerObservable.add((pointerInfo) => {
             if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERMOVE) {
-                move_indicator.position = pointerInfo.pickInfo.pickedPoint;
+                if(pointerInfo.pickInfo.pickedPoint){
+                    move_indicator.position = pointerInfo.pickInfo.pickedPoint;
+                }
             }
             if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERTAP && move_indicator.isEnabled()){
                 teleporting_camera.teleport(pointerInfo);
