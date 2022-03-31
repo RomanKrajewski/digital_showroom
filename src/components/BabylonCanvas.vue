@@ -19,14 +19,12 @@ export default {
     return {
       engine: null,
       scene: null,
+      walls: null,
     }
   },
   watch:{
-    positioningArtwork(oldArtwork, newArtwork){
-      if(oldArtwork === newArtwork){
-        return
-      }
-
+    positioningArtwork(newArtwork){
+      this.walls.positionArtwork(newArtwork)
     }
   },
   methods: {
@@ -51,7 +49,7 @@ export default {
       // canvas.toString()
       const teleportingCamera = new TeleportingCamera(scene, canvas)
       new Ground(scene, teleportingCamera)
-      new Walls(scene)
+      this.walls = new Walls(scene)
       scene.environmentTexture = new BABYLON.HDRCubeTexture(`${process.env.VUE_APP_BACKEND_URL}/static/quarry.hdr`, scene, 128, false, true, false, true);
 
       const camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 0, -10), scene);

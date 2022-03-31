@@ -23,12 +23,13 @@ export default {
   data: function (){
     return {
       debugMessage: 'initial',
-      positioningArtwork: null,
+      positioningArtwork: {prop: true},
     }
   },
   methods: {
     initPositioningArtwork: function (artwork){
       this.debugMessage = artwork.name
+      this.positioningArtwork = artwork
     }
   }
 
