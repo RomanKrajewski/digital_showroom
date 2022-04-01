@@ -23,7 +23,7 @@ export default {
   data: function (){
     return {
       debugMessage: 'initial',
-      positioningArtwork: {prop: true},
+      positioningArtwork: {prop: true },
     }
   },
   methods: {

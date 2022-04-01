@@ -1,14 +1,16 @@
 <template>
 <div id="artwork_details_pane">
-  <v-card>
+  <v-card class = "pa-1">
     <v-card-title>{{ artwork.name }}</v-card-title>
     <v-card-subtitle>{{artwork.width}} cm X {{artwork.height}} cm</v-card-subtitle>
-    <v-container>
-    <v-img v-if="artwork.image_id !== null" :src="`${backend_url}/api/image/${artwork.image_id}`" ></v-img>
+    <v-container class="pa-1">
+    <v-img contain max-height="200" v-if="artwork.image_id !== null" :src="`${backend_url}/api/image/${artwork.image_id}`" ></v-img>
     </v-container>
     <v-card-actions>
-      <v-btn small color="primary" :href="contactLink">Kontakt</v-btn>
-      <v-btn small color="primary" @click="$emit('positioning' , artwork)">Positionieren</v-btn>
+      <v-row class="pa-1">
+        <v-btn class="ma-1" small color="primary" :href="contactLink">Kontakt</v-btn>
+        <v-btn class="ma-1" small color="primary" @click="$emit('positioning' , artwork)">Positionieren</v-btn>
+      </v-row>
     </v-card-actions>
   </v-card>
 </div>

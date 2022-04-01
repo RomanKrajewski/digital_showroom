@@ -1,4 +1,5 @@
 import * as BABYLON from "babylonjs";
+import {SCALING_FACTOR} from "@/components/scene_elements/constants";
 
 class Walls{
     positioningIndicator
@@ -60,8 +61,8 @@ class Walls{
             }
         }
         const options = {
-            width: this.currentArtwork.width / 100,
-            height: this.currentArtwork.height / 100,
+            width: SCALING_FACTOR * this.currentArtwork.width / 100 ,
+            height: SCALING_FACTOR * this.currentArtwork.height / 100,
             depth: 0.1,
             faceUV:faceUV
         };

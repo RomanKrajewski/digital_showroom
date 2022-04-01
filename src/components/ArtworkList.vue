@@ -1,5 +1,5 @@
 <template>
-   <v-col cols="4" id="root">
+   <v-col cols="12" sm="6" md="4" xl="2" id="root">
       <v-row >
         <v-col v-for="artwork in artworks" :key="artwork.id" cols="12">
           <artwork-info @positioning="(positioning_artwork) => $emit('positioning', positioning_artwork)" :artwork_id="artwork.id"></artwork-info>

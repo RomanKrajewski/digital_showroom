@@ -1,11 +1,12 @@
 import * as BABYLON from "babylonjs";
 
+import {SCALING_FACTOR} from "@/components/scene_elements/constants";
 
 class TeleportingCamera {
     constructor(scene, canvas) {
 
         this.scene = scene;
-        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 1, 0),this.scene);
+        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 1.75 * SCALING_FACTOR, 0),this.scene);
 
         this.camera.attachControl(canvas, true);
         this.camera.minZ = 0.1
