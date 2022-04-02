@@ -10,6 +10,7 @@ class TeleportingCamera {
 
         this.camera.attachControl(canvas, true);
         this.camera.minZ = 0.1
+        this.camera.fov = 1.3
     }
     
     teleport(pointerInfo){

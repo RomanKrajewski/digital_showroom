@@ -3,7 +3,7 @@
       <v-container fluid>
         <v-row>
           <v-col cols="12">
-              <babylon-canvas :debug-message="debugMessage" :positioning-artwork="positioningArtwork"></babylon-canvas>
+              <babylon-canvas :debug-message="debugMessage" :positioning-artwork="positioningArtwork" @artwork-positioned="positioningArtwork = null"></babylon-canvas>
           </v-col>
           <artwork-list @positioning="initPositioningArtwork" v-if="show_navigation"></artwork-list>
         </v-row>
@@ -28,7 +28,6 @@ export default {
   },
   methods: {
     initPositioningArtwork: function (artwork){
-      this.debugMessage = artwork.name
       this.positioningArtwork = artwork
     }
   }

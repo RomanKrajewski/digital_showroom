@@ -24,7 +24,9 @@ export default {
   },
   watch:{
     positioningArtwork(newArtwork){
-      this.walls.positionArtwork(newArtwork)
+      if (newArtwork){
+        this.walls.positionArtwork(newArtwork)
+      }
     }
   },
   methods: {
@@ -49,7 +51,8 @@ export default {
       // canvas.toString()
       const teleportingCamera = new TeleportingCamera(scene, canvas)
       new Ground(scene, teleportingCamera)
-      this.walls = new Walls(scene)
+      this.walls = new Walls(scene, this)
+      this.walls.loadArtworks()
       scene.environmentTexture = new BABYLON.HDRCubeTexture(`${process.env.VUE_APP_BACKEND_URL}/static/quarry.hdr`, scene, 128, false, true, false, true);
 
       const camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 0, -10), scene);
@@ -63,6 +66,9 @@ export default {
       });
 
       return scene;
+    },
+    artworkPositioned: function() {
+      this.$emit('artwork-positioned')
     }
   },
   mounted() {

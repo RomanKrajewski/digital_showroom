@@ -10,12 +10,23 @@
 
 <script>
 import ArtworkInfo from "@/components/ArtworkInfo";
+import axios from "axios";
 export default {
   name: "ArtworkList",
   components: {ArtworkInfo},
   data: function (){
     return {
-      artworks: [{id:1},{id:2},{id:3}]
+      artworks: []
+    }
+  },
+  async mounted () {
+    this.artworks = await this.getArtworkArray()
+  },
+  methods:{
+    getArtworkArray: async function (){
+      const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/`)
+      let artworks = JSON.parse(response.data.artwork)
+      return artworks.map((artwork_id) => {return {id:artwork_id}})
     }
   }
 }
