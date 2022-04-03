@@ -76,6 +76,9 @@ class Walls{
         const artworkMeshes = []
         const artworkList = await ArtworkList.methods.getArtworkArray()
             for await (const artworkDetails of artworkList.map(artwork => ArtworkInfo.methods.fetchArtworkInfo(artwork))){
+                if(!artworkDetails.position_vector||!artworkDetails.orientation_vector){
+                    continue
+                }
                 const artworkMesh = this.createArtworkMesh(artworkDetails)
                 artworkMesh.position = new BABYLON.Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
                 artworkMesh.rotation = new BABYLON.Vector3(artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.z)
