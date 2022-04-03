@@ -20,7 +20,7 @@
     <v-card-subtitle>{{artwork.width}} cm X {{artwork.height}} cm</v-card-subtitle>
     </div>
     <v-container class="pa-1">
-    <v-img contain max-height="200" v-if="artwork.image_id !== null" :src="`${backend_url}/api/image/${artwork.image_id}`" >
+    <v-img contain max-height="200" :src="`${backend_url}/api/image/${artwork.image_id?artwork.image_id: '9'}`" >
       <v-overlay :absolute="true" :value="editing">
       <v-btn v-if="!uploading" color="success" @click="selectFile">
         Upload
@@ -68,7 +68,16 @@ export default {
     }
   },
   async mounted () {
-      this.artwork = await this.fetchArtworkInfo({id: this.artwork_id})
+      if (!this.artwork_id) {
+        this.editing = true
+        this.artwork = {
+          width: null,
+          height: null,
+          name: null,
+        }
+      }else{
+        this.artwork = await this.fetchArtworkInfo({id: this.artwork_id})
+      }
    },
   methods: {
     fetchArtworkInfo: async function(artwork){
@@ -79,8 +88,11 @@ export default {
       return artwork
     },
     saveArtwork: async function(){
-      await axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${this.artwork.id}`, this.artwork)
-      await this.fetchArtworkInfo(this.artwork)
+      const response = await axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${this.artwork.id !== undefined ? this.artwork.id : ''}`, this.artwork)
+      const artwork = response.data.artwork
+      artwork.height = parseInt(artwork.height)
+      artwork.width = parseInt(artwork.width)
+      this.artwork = artwork
       this.editing = false
     },
     selectFile: async function(){

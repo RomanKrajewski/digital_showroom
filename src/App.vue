@@ -13,6 +13,7 @@
       <v-btn icon v-on:click="toggle_menu">
         <v-icon>mdi-menu</v-icon>
       </v-btn>
+
     </v-app-bar>
 
     <v-main>
@@ -41,3 +42,8 @@ export default {
   }
 };
 </script>
+<style>
+  html{
+    overflow-y: auto;
+  }
+</style>

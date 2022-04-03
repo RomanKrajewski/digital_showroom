@@ -2,8 +2,8 @@
   <div >
       <v-container fluid>
         <v-row>
-          <v-col cols="12">
-              <babylon-canvas :debug-message="debugMessage" :positioning-artwork="positioningArtwork" @artwork-positioned="positioningArtwork = null"></babylon-canvas>
+          <v-col cols="12" class="ma-0 pa-0">
+              <babylon-canvas  :positioning-artwork="positioningArtwork" @artwork-positioned="positioningArtwork = null"></babylon-canvas>
           </v-col>
           <artwork-list @positioning="initPositioningArtwork" v-if="show_navigation"></artwork-list>
         </v-row>
@@ -22,7 +22,6 @@ export default {
   props:['show_navigation'],
   data: function (){
     return {
-      debugMessage: 'initial',
       positioningArtwork: {prop: true },
     }
   },
@@ -38,9 +37,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#artwork-list-wrapper{
-  position: fixed;
-  right:10px;
-}
 </style>
 

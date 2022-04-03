@@ -1,7 +1,6 @@
 <template>
   <div>
-    <canvas ref = 'canvas' ></canvas>
-    <p>{{debugMessage}}</p>
+    <canvas class="ma-0" ref = 'canvas' ></canvas>
   </div>
 </template>
 
@@ -14,7 +13,7 @@ import {Ground} from "@/components/scene_elements/ground";
 import {Walls} from "@/components/scene_elements/walls";
 export default {
   name: "BabylonCanvas",
-  props:['debugMessage', 'positioningArtwork'],
+  props:['positioningArtwork'],
   data: function () {
     return {
       engine: null,
@@ -43,7 +42,7 @@ export default {
           vm.scene = vm.setup_scene(scene, canvas, engine)
         }
         catch (e){
-          vm.debug_message = e.toString()
+          console.log(e)
         }
       })
     },
@@ -58,8 +57,6 @@ export default {
       const camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 0, -10), scene);
       camera.setTarget(BABYLON.Vector3.Zero());
       camera.attachControl(canvas, true);
-
-      // canvas.addEventListener(onmousemove())
 
       engine.runRenderLoop(function (){
         scene.render();
@@ -83,7 +80,10 @@ export default {
 
 <style scoped>
 canvas{
-  width:100%;
-  height:100%;
+  width:100vw;
+  height:100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 </style>
