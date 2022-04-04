@@ -1,7 +1,6 @@
 import * as BABYLON from "babylonjs";
 import {SCALING_FACTOR} from "@/components/scene_elements/constants";
 import axios from "axios";
-import ArtworkList from "@/components/ArtworkList";
 import ArtworkInfo from "@/components/ArtworkInfo";
 class Walls{
     positioningIndicator
@@ -74,16 +73,18 @@ class Walls{
     loadArtworks = async () => {
         this.loadedArtworks.forEach(mesh => mesh.dispose())
         const artworkMeshes = []
-        const artworkList = await ArtworkList.methods.getArtworkArray()
-            for await (const artworkDetails of artworkList.map(artwork => ArtworkInfo.methods.fetchArtworkInfo(artwork))){
-                if(!artworkDetails.position_vector||!artworkDetails.orientation_vector){
-                    continue
-                }
-                const artworkMesh = this.createArtworkMesh(artworkDetails)
-                artworkMesh.position = new BABYLON.Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
-                artworkMesh.rotation = new BABYLON.Vector3(artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.z)
-                artworkMeshes.push(artworkMesh)
+        const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/positioned`)
+        const artworks = JSON.parse(response.data.artwork)
+        const artworkList = artworks.map((artwork_id) => {return {id:artwork_id}})
+        for await (const artworkDetails of artworkList.map(artwork => ArtworkInfo.methods.fetchArtworkInfo(artwork))){
+            if(!artworkDetails.position_vector||!artworkDetails.orientation_vector){
+                continue
             }
+            const artworkMesh = this.createArtworkMesh(artworkDetails)
+            artworkMesh.position = new BABYLON.Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
+            artworkMesh.rotation = new BABYLON.Vector3(artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.z)
+            artworkMeshes.push(artworkMesh)
+        }
         this.loadedArtworks = artworkMeshes
     }
 

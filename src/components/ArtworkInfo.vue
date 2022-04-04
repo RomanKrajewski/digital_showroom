@@ -35,9 +35,17 @@
     <v-card-actions>
       <v-row class="pa-1">
         <v-btn v-if="!admin" class="ma-1" small color="primary" :href="contactLink">Kontakt</v-btn>
-        <v-btn v-if="admin && !editing" class="ma-1" small color="primary" @click="$emit('positioning' , artwork)">Positionieren</v-btn>
-        <v-btn v-if="admin && !editing" class="ma-1" small color="primary" @click="editing = true">Bearbeiten</v-btn>
-        <v-btn v-if="admin && editing" class="ma-1" small color="primary" @click="saveArtwork">Speichern</v-btn>
+        <div v-if="admin && !deleting">
+          <v-btn v-if="!editing" class="ma-1" small color="primary" @click="$emit('positioning' , artwork)">Positionieren</v-btn>
+          <v-btn v-if="!editing" class="ma-1" small color="primary" @click="editing = true">Bearbeiten</v-btn>
+          <v-btn v-if="editing" class="ma-1" small color="primary" @click="saveArtwork">Speichern</v-btn>
+          <v-btn v-if="!deleting" class="ma-1" small color="primary" @click="deleting = true">Löschen</v-btn>
+          </div>
+        <div v-if="deleting">
+          <p class = "ma-1">Löschen?</p>
+          <v-btn class="ma-1" small color="red" @click="deleteArtwork">Ja</v-btn>
+          <v-btn class="ma-1" small color="grey" @click="deleting = false">Nein</v-btn>
+        </div>
       </v-row>
     </v-card-actions>
   </v-card>
@@ -59,7 +67,8 @@ export default {
       form:{
         valid: false,
       },
-      uploading: false
+      uploading: false,
+      deleting: false
     }
   },
   computed:{
@@ -86,6 +95,10 @@ export default {
       artwork.height = parseInt(artwork.height)
       artwork.width = parseInt(artwork.width)
       return artwork
+    },
+    deleteArtwork: async function(){
+      await axios.delete(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${this.artwork.id}`)
+      this.$emit('artwork-deleted', this.artwork)
     },
     saveArtwork: async function(){
       const response = await axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${this.artwork.id !== undefined ? this.artwork.id : ''}`, this.artwork)
@@ -119,7 +132,9 @@ export default {
 
 <style scoped>
 
-
+p{
+  display: inline;
+}
 
 
 </style>

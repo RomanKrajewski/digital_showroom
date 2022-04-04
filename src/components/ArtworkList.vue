@@ -2,7 +2,7 @@
    <v-col cols="12" sm="6" md="4" xl="2" id="root" ref="root">
       <v-row >
         <v-col v-for="artwork in artworks" :key="artwork.id" cols="12">
-          <artwork-info @positioning="(positioning_artwork) => $emit('positioning', positioning_artwork)" :artwork_id="artwork.id"></artwork-info>
+          <artwork-info @positioning="(positioning_artwork) => $emit('positioning', positioning_artwork)" @artwork-deleted="removeArtworkFromList(artwork)" :artwork_id="artwork.id"></artwork-info>
         </v-col>
       </v-row>
      <v-btn id="addArtworkButton" fab dark v-if="admin" @click="addArtwork" color="success">
@@ -36,6 +36,9 @@ export default {
       this.artworks.unshift({})
       await this.$nextTick()
       this.$refs.root.scrollTop = 0
+    },
+    removeArtworkFromList: function(artwork){
+      this.artworks = this.artworks.filter((el) => el.id !== artwork.id)
     }
   }
 }
