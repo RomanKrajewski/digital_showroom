@@ -11,9 +11,9 @@ class Walls{
     constructor(scene, parentComponent) {
         this.parentComponent = parentComponent
         this.scene = scene
-        this.positioningIndicator = BABYLON.MeshBuilder.CreateBox("positioningIndicator", {width: 0.5, height: 0.25, depth:0.2}, scene);
+        this.positioningIndicator = BABYLON.MeshBuilder.CreateBox("positioningIndicator", {width: 0.5, height: 0.25, depth:0.1}, scene);
         this.positioningIndicator.setEnabled(false);
-
+//kommentar
         const positioningIndicator_material = new BABYLON.StandardMaterial("positioningIndicator_material", scene)
         positioningIndicator_material.alpha = 0.3
         positioningIndicator_material.material = positioningIndicator_material
@@ -111,7 +111,7 @@ class Walls{
         const options = {
             width: SCALING_FACTOR * artwork.width / 100 ,
             height: SCALING_FACTOR * artwork.height / 100,
-            depth: 0.1,
+            depth: 0.06,
             faceUV:faceUV
         };
 
