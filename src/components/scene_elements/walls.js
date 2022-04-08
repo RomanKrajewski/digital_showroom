@@ -1,5 +1,5 @@
 import * as BABYLON from "babylonjs";
-import {SCALING_FACTOR} from "@/components/scene_elements/constants";
+import {SCALING_FACTOR} from "@/constants";
 import axios from "axios";
 import ArtworkInfo from "@/components/ArtworkInfo";
 class Walls{

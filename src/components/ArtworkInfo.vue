@@ -33,8 +33,8 @@
     </v-container>
     <v-card-actions>
       <v-row class="pa-1">
-        <v-btn v-if="!admin" class="ma-1" small color="primary" :href="contactLink">Kontakt</v-btn>
-        <div v-if="admin && !deleting">
+        <v-btn v-if="!userStore.isLoggedIn" class="ma-1" small color="primary" :href="contactLink">Kontakt</v-btn>
+        <div v-if="userStore.isLoggedIn && !deleting">
           <v-btn v-if="!editing" class="ma-1" small color="primary" @click="$emit('positioning' , artwork)">Positionieren</v-btn>
           <v-btn v-if="!editing" class="ma-1" small color="primary" @click="editing = true">Bearbeiten</v-btn>
           <v-btn v-if="editing" class="ma-1" small color="primary" @click="saveArtwork">Speichern</v-btn>
@@ -53,6 +53,7 @@
 
 <script>
 import axios from "axios";
+import {useUserStore} from "@/userStore";
 
 export default {
   name: "ArtworkInfo",
@@ -62,7 +63,6 @@ export default {
       artwork: null,
       backend_url: process.env.VUE_APP_BACKEND_URL,
       editing: false,
-      admin: true,
       form:{
         valid: false,
       },
@@ -70,9 +70,16 @@ export default {
       deleting: false
     }
   },
+  setup(){
+    const userStore = useUserStore()
+    return {userStore}
+  },
   computed:{
     contactLink: function (){
       return "mailto:name@bla.de?subject=Anfrage zu " + this.artwork.title
+    },
+    admin: function (){
+      return this.userStore.isLoggedIn
     }
   },
   async mounted () {

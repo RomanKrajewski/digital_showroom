@@ -10,10 +10,10 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon v-on:click="show_navigation = !show_navigation">
+      <v-btn icon v-on:click="toggleNavigation">
         <v-icon>mdi-menu</v-icon>
       </v-btn>
-      <v-btn icon v-on:click="show_login = !show_login">
+      <v-btn icon v-on:click="toggleLogin">
         <v-icon>mdi-account-circle</v-icon>
       </v-btn>
 
@@ -38,7 +38,22 @@ export default {
   data: () => ({
     show_navigation: false,
     show_login: false
-  })
+  }),
+
+  methods: {
+    toggleLogin: function () {
+      this.show_login = !this.show_login
+      if (this.show_login) {
+        this.show_navigation = false
+      }
+    },
+    toggleNavigation: function(){
+      this.show_navigation = !this.show_navigation
+      if(this.show_navigation){
+        this.show_login = false
+      }
+    }
+  }
 };
 </script>
 <style>

@@ -1,6 +1,6 @@
 import * as BABYLON from "babylonjs";
 
-import {SCALING_FACTOR} from "@/components/scene_elements/constants";
+import {SCALING_FACTOR} from "@/constants";
 
 class TeleportingCamera {
     constructor(scene, canvas) {
