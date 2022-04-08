@@ -1,6 +1,5 @@
 <template>
 <div id="artwork_details_pane" v-if="artwork">
-
   <v-card class = "pa-1" >
     <v-form class="pa-3" v-if="editing" v-model="form.valid">
           <v-text-field label="Titel" v-model="artwork.name" required ></v-text-field>
@@ -27,7 +26,7 @@
       </v-btn>
       <v-progress-circular
           v-if="uploading"
-          indeterminate
+          :indeterminate="true"
           color="primary"
       ></v-progress-circular>
     </v-overlay></v-img>

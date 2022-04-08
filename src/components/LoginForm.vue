@@ -1,17 +1,19 @@
 <template>
-<div id="login_root" class="pa-2">
-  <v-text-field label="Mail" v-model="user.email" required ></v-text-field>
-  <v-text-field label="Passwort" v-model="user.password" required ></v-text-field>
-  <v-btn color="primary" @click="login"> Login</v-btn>
-</div>
+<v-row id="login_root" class="pa-2">
+  <v-col cols="12">
+    <v-text-field label="Mail" v-model="user.email" required ></v-text-field>
+    <v-text-field label="Passwort" v-model="user.password" required ></v-text-field>
+    <v-btn color="primary" @click="login"> Login</v-btn>
+  </v-col>
+</v-row>
 </template>
 
 <script>
 import axios from "axios";
-import {getCookie} from "@/components/utils";
+import {getCookie} from "@/utils";
 
 export default {
-  name: "Login",
+  name: "LoginForm",
   data: function (){
     return {
       user: {
@@ -31,9 +33,4 @@ export default {
 </script>
 
 <style scoped>
-#login_root{
-  position: fixed;
-  right: 0;
-  background: white;
-}
 </style>

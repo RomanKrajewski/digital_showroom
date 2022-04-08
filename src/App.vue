@@ -20,25 +20,25 @@
     </v-app-bar>
 
     <v-main>
-      <Main :show_navigation="show_navigation" :show_login="show_login"/>
+      <main-window :show_navigation="show_navigation" :show_login="show_login"/>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import Main from './components/Main';
+import MainWindow from './components/MainWindow';
 
 export default {
   name: 'App',
 
   components: {
-    Main,
+    MainWindow,
   },
 
   data: () => ({
     show_navigation: false,
     show_login: false
-  }),
+  })
 };
 </script>
 <style>

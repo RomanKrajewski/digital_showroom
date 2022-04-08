@@ -1,14 +1,12 @@
 <template>
-   <v-col cols="12" sm="6" md="4" xl="2" id="artworklist_root" ref="root">
-      <v-row >
+   <v-row ref="root" id="artworkList" class="pa-2">
         <v-col v-for="artwork in artworks" :key="artwork.id" cols="12">
           <artwork-info @positioning="(positioning_artwork) => $emit('positioning', positioning_artwork)" @artwork-deleted="removeArtworkFromList(artwork)" :artwork_id="artwork.id"></artwork-info>
         </v-col>
-      </v-row>
      <v-btn id="addArtworkButton" fab dark v-if="admin" @click="addArtwork" color="success">
        <v-icon>mdi-plus</v-icon>
      </v-btn>
-   </v-col>
+   </v-row>
 </template>
 
 <script>
@@ -45,17 +43,16 @@ export default {
 </script>
 
 <style scoped>
-#artworklist_root{
-  position: fixed;
-  right: 0;
-  background: white;
-  height: calc(100vh - 64px);
-  overflow: scroll;
-  overflow-x: hidden;
-}
+
 #addArtworkButton{
   position: fixed;
   right:20px;
   top:84px;
+}
+
+#artworkList{
+  height: calc(100vh - 64px);
+  overflow: scroll;
+  overflow-x: hidden;
 }
 </style>
