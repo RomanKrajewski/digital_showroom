@@ -13,7 +13,7 @@ import {Ground} from "@/components/scene_elements/ground";
 import {Walls} from "@/components/scene_elements/walls";
 export default {
   name: "BabylonCanvas",
-  props:['positioningArtwork'],
+  props:['positioningArtwork', 'updatingArtwork'],
   data: function () {
     return {
       engine: null,
@@ -26,7 +26,11 @@ export default {
       if (newArtwork){
         this.walls.positionArtwork(newArtwork)
       }
+    },
+    updatingArtwork(newArtwork){
+      this.walls.updateArtwork(newArtwork)
     }
+
   },
   methods: {
     resize: function (){

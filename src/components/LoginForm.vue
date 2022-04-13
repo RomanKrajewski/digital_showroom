@@ -5,8 +5,15 @@
     <v-btn @click="logout">Logout</v-btn>
   </v-col>
   <v-col v-else>
+    <v-alert
+        v-if="auth_failed"
+        outlined
+        dense
+        type="error"
+    >{{error_message}}</v-alert>
+
     <v-text-field label="Mail" v-model="user.email" required ></v-text-field>
-    <v-text-field label="Passwort" v-model="user.password" required ></v-text-field>
+    <v-text-field label="Passwort" v-model="user.password" type="password" required ></v-text-field>
     <v-btn color="primary" @click="login"> Login</v-btn>
   </v-col>
 </v-card>
@@ -28,14 +35,24 @@ export default {
       user: {
         email: null,
         password: null,
-        }
+        },
+      auth_failed: false,
+      error_message: ''
       }
   },
   methods:{
     login: async function (){
-      await axios.post(`${process.env.VUE_APP_BACKEND_URL}/auth/login`, this.user)
-      axios.defaults.headers.common['X-CSRF-TOKEN'] = getCookie('csrf_access_token');
-      this.userStore.login(this.user.email)
+      try{
+        await axios.post(`${process.env.VUE_APP_BACKEND_URL}/auth/login`, this.user)
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = getCookie('csrf_access_token');
+        this.userStore.login(this.user.email)
+        this.auth_failed = false
+        this.error_message = ''
+      }catch (e){
+        this.auth_failed = true
+        this.error_message = e.response.data.message ? e.response.data.message : e.response.data.errors
+      }
+
     },
     logout: async function(){
       await axios.get(`${process.env.VUE_APP_BACKEND_URL}/auth/logout`)

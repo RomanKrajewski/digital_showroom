@@ -59,9 +59,9 @@ class Walls{
                         axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${this.currentArtwork.id}`, this.currentArtwork).then(
                             () => {
                                 this.positioningIndicator.setEnabled(false)
+                                this.updateArtwork(this.currentArtwork)
                                 this.currentArtwork = null
                                 this.positioningIndicator.dispose()
-                                this.loadArtworks()
                                 this.parentComponent.artworkPositioned()
                             }
                         )
@@ -75,11 +75,14 @@ class Walls{
         })
     }
 
-    loadArtworks = async () => {
-        this.loadedArtworks.forEach(mesh => mesh.dispose())
+    loadArtworks = async (filter_by_ids) => {
+        this.loadedArtworks.filter((artwork => filter_by_ids.includes(artwork.artwork.id))).forEach(artwork => artwork.mesh.dispose())
         const artworkMeshes = []
         const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/positioned`)
-        const artworks = JSON.parse(response.data.artwork)
+        let artworks = JSON.parse(response.data.artwork)
+        if (filter_by_ids){
+            artworks = artworks.filter((artwork_id) => filter_by_ids.includes(artwork_id))
+        }
         const artworkList = artworks.map((artwork_id) => {return {id:artwork_id}})
         for await (const artworkDetails of artworkList.map(artwork => ArtworkInfo.methods.fetchArtworkInfo(artwork))){
             if(!artworkDetails.position_vector||!artworkDetails.orientation_vector){
@@ -93,16 +96,20 @@ class Walls{
             artworkMesh.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
                     () => this.parentComponent.artworkHoverEnter(artworkDetails)))
-            artworkMeshes.push(artworkMesh)
+            artworkMeshes.push({mesh: artworkMesh, artwork: artworkDetails} )
         }
         this.loadedArtworks = artworkMeshes
     }
 
+    updateArtwork = (artwork) => {
+        this.loadArtworks([artwork.id])
+    }
 
     positionArtwork = (artworkToPosition) => {
         this.positioningIndicator.dispose()
         this.currentArtwork = artworkToPosition
         this.positioningIndicator = this.createArtworkMesh(artworkToPosition)
+        this.positioningIndicator.setEnabled(false)
     }
 
     createArtworkMesh = (artwork) => {

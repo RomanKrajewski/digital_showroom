@@ -117,6 +117,7 @@ export default {
       artwork.width = parseInt(artwork.width)
       this.artwork = artwork
       this.editing = false
+      this.$emit('artwork-updated', this.artwork)
     },
     selectFile: async function(){
       let fileInputElement = this.$refs.file;
