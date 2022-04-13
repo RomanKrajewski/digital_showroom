@@ -17,8 +17,11 @@ class Walls{
         const positioningIndicator_material = new BABYLON.StandardMaterial("positioningIndicator_material", scene)
         positioningIndicator_material.alpha = 0.3
         positioningIndicator_material.material = positioningIndicator_material
-
+        // let debugLineMesh = BABYLON.MeshBuilder.CreateLines("debug_line", {points: [new BABYLON.Vector3(0,0,0), new BABYLON.Vector3(0,0,0)]}, scene)
         scene.meshes.filter(mesh => mesh.name.includes("Wand") || mesh.name.includes("ROOM")).forEach(mesh => {
+            if (mesh.name.includes("Wand")){
+                mesh.flipFaces(true)
+            }
             mesh.actionManager = new BABYLON.ActionManager(scene)
             mesh.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
@@ -27,7 +30,9 @@ class Walls{
                 if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERMOVE) {
                     if(pointerInfo.pickInfo.pickedPoint){
                         this.positioningIndicator.position = pointerInfo.pickInfo.pickedPoint;
-                        const v1 = pointerInfo.pickInfo.getNormal()
+                        const v1 = pointerInfo.pickInfo.getNormal(true)
+                        // debugLineMesh.dispose()
+                        // debugLineMesh = BABYLON.MeshBuilder.CreateLines("debug_line", {points: [pointerInfo.pickInfo.pickedPoint, pointerInfo.pickInfo.pickedPoint.add(v1)]}, scene)
                         const v2 = new BABYLON.Vector3(0,0,1)
                         const angle = Math.acos(BABYLON.Vector3.Dot(v1, v2));
                         const axis = BABYLON.Vector3.Cross(v1,v2) ;
@@ -81,8 +86,13 @@ class Walls{
                 continue
             }
             const artworkMesh = this.createArtworkMesh(artworkDetails)
+
             artworkMesh.position = new BABYLON.Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
             artworkMesh.rotation = new BABYLON.Vector3(artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.z)
+            artworkMesh.actionManager = new BABYLON.ActionManager(this.scene)
+            artworkMesh.actionManager.registerAction(
+                new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
+                    () => this.parentComponent.artworkHoverEnter(artworkDetails)))
             artworkMeshes.push(artworkMesh)
         }
         this.loadedArtworks = artworkMeshes
@@ -124,8 +134,25 @@ class Walls{
         mat.emissiveColor = new BABYLON.Color3(1, 1, 1);
         mat.ambientColor = new BABYLON.Color3(0.23, 0.98, 0.53);
         artworkMesh.material = mat;
+
+        if (artwork.sold){
+            const red_dot = this.createRedDot()
+            red_dot.position = new BABYLON.Vector3(artworkMesh.position.x + (artwork.width/2 + 5) * SCALING_FACTOR / 100, artworkMesh.position.y - (artwork.height /2 - 2.5) * SCALING_FACTOR /100, artworkMesh.position.z )
+            red_dot.setParent(artworkMesh)
+        }
         return artworkMesh
     }
 
+    createRedDot = () => {
+        const red_dot = BABYLON.MeshBuilder.CreateCylinder("red_dot", {diameter: 0.05 * SCALING_FACTOR, height: 0.03 *SCALING_FACTOR}, this.scene);
+        red_dot.rotate(new BABYLON.Vector3(1,0,0), BABYLON.Angle.FromDegrees(90).radians())
+
+        const move_indicator_material = new BABYLON.StandardMaterial("move_indicator_material", this.scene)
+        move_indicator_material.emissiveColor = new BABYLON.Color3(0.8, 0.2, 0.2);
+        move_indicator_material.alpha = 1
+        red_dot.material = move_indicator_material
+
+        return red_dot
+    }
 }
 export {Walls}

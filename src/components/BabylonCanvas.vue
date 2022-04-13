@@ -66,6 +66,9 @@ export default {
     },
     artworkPositioned: function() {
       this.$emit('artwork-positioned')
+    },
+    artworkHoverEnter: function(artwork){
+      this.$emit('artwork-hover-enter', artwork)
     }
   },
   mounted() {

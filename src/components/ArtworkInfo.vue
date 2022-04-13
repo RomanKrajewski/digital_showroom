@@ -10,13 +10,16 @@
           <v-col cols = "3">
             <v-text-field label="Höhe" cols="3" dense v-model.number="artwork.height" required suffix="cm"></v-text-field>
           </v-col>
+          <v-checkbox dense v-model="artwork.sold" label="Verkauft"></v-checkbox>
         </v-row>
       <input ref="file" type="file" hidden accept="image/*" @change="uploadFile">
 
     </v-form>
     <div v-if="!editing">
-    <v-card-title>{{ artwork.name }}</v-card-title>
-    <v-card-subtitle>{{artwork.width}} cm X {{artwork.height}} cm</v-card-subtitle>
+      <v-card-title>{{ artwork.name }}</v-card-title>
+      <v-card-subtitle>{{artwork.width}} cm X {{artwork.height}} cm</v-card-subtitle>
+      <v-card-subtitle v-if="artwork.sold">Verkauft</v-card-subtitle>
+      <v-card-subtitle v-if="!artwork.sold">Verfügbar</v-card-subtitle>
     </div>
     <v-container class="pa-1">
     <v-img contain max-height="200" :src="`${backend_url}/api/image/${artwork.image_id?artwork.image_id: '9'}`" >
@@ -39,7 +42,7 @@
           <v-btn v-if="!editing" class="ma-1" small color="primary" @click="editing = true">Bearbeiten</v-btn>
           <v-btn v-if="editing" class="ma-1" small color="primary" @click="saveArtwork">Speichern</v-btn>
           <v-btn v-if="!deleting" class="ma-1" small color="primary" @click="deleting = true">Löschen</v-btn>
-          </div>
+        </div>
         <div v-if="deleting">
           <p class = "ma-1">Löschen?</p>
           <v-btn class="ma-1" small color="red" @click="deleteArtwork">Ja</v-btn>
@@ -89,6 +92,7 @@ export default {
           width: null,
           height: null,
           name: null,
+          sold: false
         }
       }else{
         this.artwork = await this.fetchArtworkInfo({id: this.artwork_id})
