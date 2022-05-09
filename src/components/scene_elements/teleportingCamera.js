@@ -6,7 +6,7 @@ class TeleportingCamera {
     constructor(scene, canvas) {
 
         this.scene = scene;
-        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 1.60 * SCALING_FACTOR, 0),this.scene);
+        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 1.20 * SCALING_FACTOR, 0),this.scene);
 
         this.camera.attachControl(canvas, true);
         this.camera.minZ = 0.1

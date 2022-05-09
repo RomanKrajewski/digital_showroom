@@ -1,7 +1,7 @@
 <template>
    <v-row ref="root" id="artworkList" class="pa-2">
         <v-col v-for="artwork in artworks" :key="artwork.id" cols="12">
-          <artwork-info @artwork-updated="$emit('artwork-updated')" @positioning="(positioning_artwork) => $emit('positioning', positioning_artwork)" @artwork-deleted="removeArtworkFromList(artwork)" :artwork_id="artwork.id"></artwork-info>
+          <artwork-info @artwork-updated="(updating_artwork) => $emit('artwork-updated', updating_artwork)" @positioning="(positioning_artwork) => $emit('positioning', positioning_artwork)" @artwork-deleted="removeArtworkFromList(artwork)" :artwork_id="artwork.id"></artwork-info>
         </v-col>
      <v-btn id="addArtworkButton" fab dark v-if="admin" @click="addArtwork" color="success">
        <v-icon>mdi-plus</v-icon>
@@ -36,6 +36,7 @@ export default {
       this.$refs.root.scrollTop = 0
     },
     removeArtworkFromList: function(artwork){
+
       this.artworks = this.artworks.filter((el) => el.id !== artwork.id)
     }
   }

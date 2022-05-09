@@ -7,6 +7,7 @@
 <script>
 import * as BABYLON from 'babylonjs';
 import 'babylonjs-loaders';
+// import "@babylonjs/loaders/glTF";
 
 import {TeleportingCamera} from '@/components/scene_elements/teleportingCamera'
 import {Ground} from "@/components/scene_elements/ground";

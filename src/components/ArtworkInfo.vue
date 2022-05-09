@@ -12,7 +12,7 @@
           </v-col>
           <v-checkbox dense v-model="artwork.sold" label="Verkauft"></v-checkbox>
         </v-row>
-      <input ref="file" type="file" hidden accept="image/*" @change="uploadFile">
+      <input ref="file" type="file" hidden accept="image/*" @change="uploadFileAWS">
 
     </v-form>
     <div v-if="!editing">
@@ -22,17 +22,17 @@
       <v-card-subtitle v-if="!artwork.sold">Verfügbar</v-card-subtitle>
     </div>
     <v-container class="pa-1">
-    <v-img contain max-height="200" :src="`${backend_url}/api/image/${artwork.image_id?artwork.image_id: '9'}`" >
-      <v-overlay :absolute="true" :value="editing">
-      <v-btn v-if="!uploading" color="success" @click="selectFile">
-        Upload
-      </v-btn>
-      <v-progress-circular
-          v-if="uploading"
-          :indeterminate="true"
-          color="primary"
-      ></v-progress-circular>
-    </v-overlay></v-img>
+      <v-img v-if="!editing" contain max-height="200" :src="artwork.image_url?artwork.image_url: 'https://imagesshowroom.s3.eu-central-1.amazonaws.com/placeholder.jpg'" ></v-img>
+      <v-container id="upload_container" v-if="editing" :style="`background-image: url(${artwork.image_url?artwork.image_url:'https://imagesshowroom.s3.eu-central-1.amazonaws.com/placeholder.jpg'})`">
+        <v-btn v-if="!uploading" color="success" @click="selectFile">
+          Upload
+        </v-btn>
+        <v-progress-circular
+            v-if="uploading"
+            :indeterminate="true"
+            color="primary"
+        ></v-progress-circular>
+      </v-container>
     </v-container>
     <v-card-actions>
       <v-row class="pa-1">
@@ -41,7 +41,7 @@
           <v-btn v-if="!editing" class="ma-1" small color="primary" @click="$emit('positioning' , artwork)">Positionieren</v-btn>
           <v-btn v-if="!editing" class="ma-1" small color="primary" @click="editing = true">Bearbeiten</v-btn>
           <v-btn v-if="editing" class="ma-1" small color="primary" @click="saveArtwork">Speichern</v-btn>
-          <v-btn v-if="!deleting" class="ma-1" small color="primary" @click="deleting = true">Löschen</v-btn>
+          <v-btn v-if="!deleting && !editing" class="ma-1" small color="primary" @click="deleting = true">Löschen</v-btn>
         </div>
         <div v-if="deleting">
           <p class = "ma-1">Löschen?</p>
@@ -79,7 +79,7 @@ export default {
   },
   computed:{
     contactLink: function (){
-      return "mailto:name@bla.de?subject=Anfrage zu " + this.artwork.title
+      return "mailto:post@kevin-luedicke.de?subject=Anfrage zu " + this.artwork.name
     },
     admin: function (){
       return this.userStore.isLoggedIn
@@ -92,7 +92,8 @@ export default {
           width: null,
           height: null,
           name: null,
-          sold: false
+          sold: false,
+          image_url: ""
         }
       }else{
         this.artwork = await this.fetchArtworkInfo({id: this.artwork_id})
@@ -104,10 +105,15 @@ export default {
       artwork = response.data.artwork
       artwork.height = parseInt(artwork.height)
       artwork.width = parseInt(artwork.width)
+      if (!artwork.image_url){
+        artwork.image_url = ""
+      }
       return artwork
     },
     deleteArtwork: async function(){
-      await axios.delete(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${this.artwork.id}`)
+      if(this.artwork.id){
+        await axios.delete(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${this.artwork.id}`)
+      }
       this.$emit('artwork-deleted', this.artwork)
     },
     saveArtwork: async function(){
@@ -127,13 +133,25 @@ export default {
     uploadFile: async function(){
       let fileInputElement = this.$refs.file
       let file = fileInputElement.files[0]
-      console.log(file.name + file.type)
       this.uploading = true
       const response = await axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/image/`, file, {headers: {
         'Content-Type': file.type
       }})
       const image_id = response.data.image.id
       this.artwork.image_id = image_id
+      this.uploading = false
+    },
+    uploadFileAWS: async function(){
+      let fileInputElement = this.$refs.file
+      let file = fileInputElement.files[0]
+      this.uploading = true
+      const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/api/image/s3_request`, {params: {
+          file_name: file.name
+        }})
+      const put_url = response.data.url
+      const upload_response = await axios.put(put_url, file, {headers: {'Content-Type': ''}})
+      this.artwork.image_url = put_url.split("?")[0]
+      console.log(upload_response)
       this.uploading = false
     }
 
@@ -145,6 +163,15 @@ export default {
 
 p{
   display: inline;
+}
+
+#upload_container{
+  background-size: contain;
+  background-position: center;
+  height:200px;
+  display: flex;
+  justify-content: center;
+  align-items: center
 }
 
 

@@ -76,7 +76,10 @@ class Walls{
     }
 
     loadArtworks = async (filter_by_ids) => {
-        this.loadedArtworks.filter((artwork => filter_by_ids.includes(artwork.artwork.id))).forEach(artwork => artwork.mesh.dispose())
+        this.loadedArtworks.filter((artwork => filter_by_ids.includes(artwork.artwork.id))).forEach(artwork => {
+            artwork.mesh.getChildren().forEach(child => child.dispose())
+            artwork.mesh.dispose()
+        })
         const artworkMeshes = []
         const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/positioned`)
         let artworks = JSON.parse(response.data.artwork)
@@ -135,7 +138,7 @@ class Walls{
         let artworkMesh = BABYLON.MeshBuilder.CreateBox('box', options, this.scene);
 
         const mat = new BABYLON.StandardMaterial("mat", this.scene);
-        mat.diffuseTexture = new BABYLON.Texture(`${process.env.VUE_APP_BACKEND_URL}/api/image/${artwork.image_id}`, this.scene);
+        mat.diffuseTexture = new BABYLON.Texture(artwork.image_url, this.scene);
         mat.diffuseColor = new BABYLON.Color3(1, 0, 1);
         mat.specularColor = new BABYLON.Color3(0.5, 0.6, 0.87);
         mat.emissiveColor = new BABYLON.Color3(1, 1, 1);
@@ -151,7 +154,7 @@ class Walls{
     }
 
     createRedDot = () => {
-        const red_dot = BABYLON.MeshBuilder.CreateCylinder("red_dot", {diameter: 0.05 * SCALING_FACTOR, height: 0.03 *SCALING_FACTOR}, this.scene);
+        const red_dot = BABYLON.MeshBuilder.CreateCylinder("red_dot", {diameter: 0.02 * SCALING_FACTOR, height: 0.02 *SCALING_FACTOR}, this.scene);
         red_dot.rotate(new BABYLON.Vector3(1,0,0), BABYLON.Angle.FromDegrees(90).radians())
 
         const move_indicator_material = new BABYLON.StandardMaterial("move_indicator_material", this.scene)
