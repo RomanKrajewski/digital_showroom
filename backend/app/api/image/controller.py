@@ -35,7 +35,7 @@ class ImagePost(Resource):
 
 @api.route("/s3_request")
 class ImageS3Request(Resource):
-    # @jwt_required()
+    @jwt_required()
     def get(self):
         file_name = request.args.get('file_name')
 
