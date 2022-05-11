@@ -94,7 +94,6 @@ export default {
           name: null,
           sold: false,
           image_url: "",
-          image_id:0
         }
       }else{
         this.artwork = await this.fetchArtworkInfo({id: this.artwork_id})
