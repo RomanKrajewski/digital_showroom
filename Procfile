@@ -1,1 +1,1 @@
-web: gunicorn showroom:app
+web: gunicorn --pythonpath backend showroom:app

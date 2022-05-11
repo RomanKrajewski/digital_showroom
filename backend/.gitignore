@@ -1,0 +1,7 @@
+.vscode/
+dist
+__pycache__
+*.env
+*.sqlite
+.idea
+uploaded_images
