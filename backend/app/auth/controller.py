@@ -15,7 +15,6 @@ auth_success = AuthDto.auth_success
 login_schema = LoginSchema()
 register_schema = RegisterSchema()
 
-
 @api.route("/login")
 class AuthLogin(Resource):
     """ User login endpoint
