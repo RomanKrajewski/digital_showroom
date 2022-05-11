@@ -17,15 +17,10 @@ class VectorSchema(Schema):
 
 class ArtworkSchema(Schema):
     class Meta:
-        fields = ("id", "name", "width", "height", "sold", "added_date", "image_id", "image_url", "orientation_vector", "position_vector")
+        fields = ("id", "name", "width", "height", "sold", "added_date", "image_url", "orientation_vector", "position_vector")
 
     orientation_vector = fields.Nested(VectorSchema(only=["x", "y", "z"]))
     position_vector = fields.Nested(VectorSchema())
-
-class ImageSchema(Schema):
-    class Meta:
-        fields = ["id"]
-
 
 
 class LoginSchema(Schema):

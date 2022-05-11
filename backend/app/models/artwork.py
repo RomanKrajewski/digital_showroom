@@ -14,7 +14,6 @@ class Artwork(Model):
     name = Column(db.String(64), unique=True, index=True)
     width = Column(db.Integer)
     height = Column(db.Integer)
-    image_id = Column(db.Integer, db.ForeignKey("images.id"))
     image_url = Column(db.String(85))
     sold = Column(db.Boolean)
     position_vector_id = Column(db.Integer, db.ForeignKey("vectors.id"))
