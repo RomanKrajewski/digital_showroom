@@ -21,7 +21,6 @@ class ArtworkDto:
             "name": fields.String(required=True),
             "width": fields.Integer(required=True),
             "height": fields.Integer(required=True),
-            "image_id": fields.Integer(required=True),
             "image_url": fields.String(),
             "sold": fields.Boolean(required=True),
             "added_date": fields.DateTime,
