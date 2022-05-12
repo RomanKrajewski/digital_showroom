@@ -2,12 +2,11 @@ import json
 
 from flask import current_app
 
-from app.api.image.service import ImageService
 from app import db
 from app.utils import message, err_resp, internal_err_resp
 from app.models.artwork import Artwork
 from app.models.vector import Vector
-from app.models.schemas import ArtworkSchema, VectorSchema
+from app.models.schemas import ArtworkSchema
 
 
 class ArtworkService:
@@ -69,11 +68,10 @@ class ArtworkService:
         name = data["name"]
         height = data["height"]
         width = data["width"]
-        image_id = data["image_id"]
         image_url = data["image_url"]
         sold = data["sold"]
         try:
-            new_artwork = Artwork(name=name, width=width, height=height, image_id=image_id, image_url=image_url, sold=sold)
+            new_artwork = Artwork(name=name, width=width, height=height, image_url=image_url, sold=sold)
 
             db.session.add(new_artwork)
             db.session.flush()
@@ -110,7 +108,6 @@ class ArtworkService:
             return err_resp("Artwork not found!", "user_404", 404)
 
         try:
-            ImageService.delete_image(artwork.image_id)
             db.session.delete(artwork)
             db.session.commit()
             return 204
@@ -124,7 +121,6 @@ class ArtworkService:
         name = data["name"]
         height = data["height"]
         width = data["width"]
-        image_id = data["image_id"]
         image_url = data["image_url"]
         sold = data["sold"]
 
@@ -134,7 +130,6 @@ class ArtworkService:
             artwork.name = name
             artwork.height = height
             artwork.width = width
-            artwork.image_id = image_id
             artwork.sold = sold
             artwork.image_url = image_url
 
