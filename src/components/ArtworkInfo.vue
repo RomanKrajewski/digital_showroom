@@ -80,9 +80,6 @@ export default {
   computed:{
     contactLink: function (){
       return "mailto:post@kevin-luedicke.de?subject=Anfrage zu " + this.artwork.name
-    },
-    admin: function (){
-      return this.userStore.isLoggedIn
     }
   },
   async mounted () {

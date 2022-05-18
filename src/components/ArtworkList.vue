@@ -3,7 +3,7 @@
         <v-col v-for="artwork in artworks" :key="artwork.id" cols="12">
           <artwork-info @artwork-updated="(updating_artwork) => $emit('artwork-updated', updating_artwork)" @positioning="(positioning_artwork) => $emit('positioning', positioning_artwork)" @artwork-deleted="removeArtworkFromList(artwork)" :artwork_id="artwork.id"></artwork-info>
         </v-col>
-     <v-btn id="addArtworkButton" fab dark v-if="admin" @click="addArtwork" color="success">
+     <v-btn id="addArtworkButton" fab dark v-if="userStore.isLoggedIn" @click="addArtwork" color="success">
        <v-icon>mdi-plus</v-icon>
      </v-btn>
    </v-row>
@@ -12,6 +12,7 @@
 <script>
 import ArtworkInfo from "./ArtworkInfo";
 import axios from "axios";
+import {useUserStore} from "@/userStore";
 export default {
   name: "ArtworkList",
   components: {ArtworkInfo},
@@ -23,6 +24,10 @@ export default {
   },
   async mounted () {
     this.artworks = await this.getArtworkArray()
+  },
+  setup(){
+    const userStore = useUserStore()
+    return {userStore}
   },
   methods:{
     getArtworkArray: async function (){

@@ -53,6 +53,7 @@ export default {
     },
     setup_scene: function(scene, canvas, engine){
       // canvas.toString()
+      scene.hoverCursor = "default"
       const teleportingCamera = new TeleportingCamera(scene, canvas)
       new Ground(scene, teleportingCamera)
       this.walls = new Walls(scene, this)
