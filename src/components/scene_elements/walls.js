@@ -98,7 +98,16 @@ class Walls{
             artworkMesh.actionManager = new BABYLON.ActionManager(this.scene)
             artworkMesh.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
-                    () => this.parentComponent.artworkHoverEnter(artworkDetails)))
+                    () => {
+                    this.scene.hoverCursor = 'pointer'
+                    this.parentComponent.artworkHoverEnter(artworkDetails);
+                    }))
+            artworkMesh.actionManager.registerAction(
+                new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOutTrigger},
+                    () => {
+                        this.scene.hoverCursor = 'default'
+                    })
+            )
             artworkMeshes.push({mesh: artworkMesh, artwork: artworkDetails} )
         }
         this.loadedArtworks = artworkMeshes
