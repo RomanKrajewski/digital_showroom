@@ -31,7 +31,7 @@ export default {
       positioningArtwork: {prop: true },
       updatingArtwork:{prop:true},
       showHoverInfo: false,
-      hoveringArtwork: {name:'sample', width:1, height:1}
+      hoveringArtwork: null
     }
   },
   methods: {

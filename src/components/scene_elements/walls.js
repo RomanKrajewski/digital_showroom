@@ -18,8 +18,8 @@ class Walls{
         positioningIndicator_material.alpha = 0.3
         positioningIndicator_material.material = positioningIndicator_material
         // let debugLineMesh = BABYLON.MeshBuilder.CreateLines("debug_line", {points: [new BABYLON.Vector3(0,0,0), new BABYLON.Vector3(0,0,0)]}, scene)
-        scene.meshes.filter(mesh => mesh.name.includes("Wand") || mesh.name.includes("ROOM")).forEach(mesh => {
-            if (mesh.name.includes("Wand")){
+        scene.meshes.filter(mesh => mesh.name.includes("Wand_vorne") || mesh.name.includes("ROOM")).forEach(mesh => {
+            if (mesh.name.includes("Wand_vorne")){
                 mesh.flipFaces(true)
             }
             mesh.actionManager = new BABYLON.ActionManager(scene)
@@ -106,6 +106,13 @@ class Walls{
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOutTrigger},
                     () => {
                         this.scene.hoverCursor = 'default'
+                        this.parentComponent.artworkHoverEnter(null);
+                    })
+            )
+            artworkMesh.actionManager.registerAction(
+                new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPickTrigger},
+                    () => {
+                        this.parentComponent.cameraTargetArtwork(artworkDetails)
                     })
             )
             artworkMeshes.push({mesh: artworkMesh, artwork: artworkDetails} )

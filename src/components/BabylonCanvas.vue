@@ -7,7 +7,6 @@
 <script>
 import * as BABYLON from 'babylonjs';
 import 'babylonjs-loaders';
-// import "@babylonjs/loaders/glTF";
 
 import {TeleportingCamera} from './scene_elements/teleportingCamera'
 import {Ground} from "./scene_elements/ground";
@@ -20,6 +19,7 @@ export default {
       engine: null,
       scene: null,
       walls: null,
+      teleportingCamera: null,
     }
   },
   watch:{
@@ -52,17 +52,13 @@ export default {
       })
     },
     setup_scene: function(scene, canvas, engine){
-      // canvas.toString()
+
       scene.hoverCursor = "default"
-      const teleportingCamera = new TeleportingCamera(scene, canvas)
-      new Ground(scene, teleportingCamera)
+      this.teleportingCamera = new TeleportingCamera(scene, canvas)
+      new Ground(scene, this.teleportingCamera)
       this.walls = new Walls(scene, this)
       this.walls.loadArtworks()
       scene.environmentTexture = new BABYLON.HDRCubeTexture(`${process.env.VUE_APP_BACKEND_URL}/static/quarry.hdr`, scene, 128, false, true, false, true);
-
-      const camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 0, -10), scene);
-      camera.setTarget(BABYLON.Vector3.Zero());
-      camera.attachControl(canvas, true);
 
       engine.runRenderLoop(function (){
         scene.render();
@@ -75,6 +71,10 @@ export default {
     },
     artworkHoverEnter: function(artwork){
       this.$emit('artwork-hover-enter', artwork)
+    },
+    cameraTargetArtwork: function(artwork){
+      console.log(artwork)
+      this.teleportingCamera.targetArtwork(artwork)
     }
   },
   mounted() {

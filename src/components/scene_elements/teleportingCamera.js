@@ -68,5 +68,19 @@ class TeleportingCamera {
 
        this.scene.beginAnimation(this.camera, 0, 20, false, 1);
     }
+
+    targetArtwork(artworkDetails){
+        const half_h = artworkDetails.height*SCALING_FACTOR/200;
+        const l = half_h/Math.atan(this.camera.fov/2);
+        const cameraPositioningVector = new BABYLON.Vector3(0,0,-l)
+        const yprQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.z)
+        const rotationMatrix = new BABYLON.Matrix();
+        yprQuaternion.toRotationMatrix(rotationMatrix);
+        const rotatedPositioningVector = BABYLON.Vector3.TransformCoordinates(cameraPositioningVector, rotationMatrix);
+        const imagePosition = new BABYLON.Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
+
+        this.camera.position = imagePosition.add(rotatedPositioningVector)
+        this.camera.target = imagePosition
+    }
 }
 export {TeleportingCamera}
