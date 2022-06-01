@@ -1,6 +1,6 @@
 import * as BABYLON from "babylonjs";
 
-import {SCALING_FACTOR} from "../../constants";
+import {SCALING_FACTOR} from "@/constants";
 
 class TeleportingCamera {
     constructor(scene, canvas) {
@@ -40,8 +40,11 @@ class TeleportingCamera {
 
         const newCameraX= Math.max(Math.min(pick_boarder_x_pos, pointerInfo.pickInfo.pickedPoint.x), pick_boarder_x_neg)
         const newCameraZ = Math.max(Math.min(pick_boarder_z_pos, pointerInfo.pickInfo.pickedPoint.z), pick_boarder_z_neg)
+        this.animateTo(new BABYLON.Vector3(newCameraX, this.camera.position.y, newCameraZ));
+    }
 
-        const animationcamera = new BABYLON.Animation(
+    animateTo(cameraPosition, cameraTarget = null) {
+        const positionAnimation = new BABYLON.Animation(
             "camera",
             "position",
             60,
@@ -53,20 +56,46 @@ class TeleportingCamera {
 
         keys.push({
             frame: 0,
-            value:this.camera.position.clone()
+            value: this.camera.position.clone()
         });
 
         keys.push({
             frame: 20,
-            value: new BABYLON.Vector3(newCameraX,this.camera.position.y, newCameraZ),
+            value: cameraPosition,
         });
 
-        animationcamera.setKeys(keys);
-       this.camera.animations = [];
+        positionAnimation.setKeys(keys);
+        this.camera.animations = [];
 
-       this.camera.animations.push(animationcamera);
+        this.camera.animations.push(positionAnimation);
 
-       this.scene.beginAnimation(this.camera, 0, 20, false, 1);
+        if(cameraTarget){
+            const targetAnimation = new BABYLON.Animation(
+                "camera",
+                "target",
+                60,
+                BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+                BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+            );
+
+            const keys = [];
+
+            keys.push({
+                frame: 0,
+                value: this.camera.target.clone()
+            });
+
+            keys.push({
+                frame: 20,
+                value: cameraTarget,
+            });
+
+            targetAnimation.setKeys(keys);
+
+            this.camera.animations.push(targetAnimation);
+        }
+
+        this.scene.beginAnimation(this.camera, 0, 20, false, 1);
     }
 
     targetArtwork(artworkDetails){
@@ -80,8 +109,8 @@ class TeleportingCamera {
         const rotatedPositioningVector = BABYLON.Vector3.TransformCoordinates(cameraPositioningVector, rotationMatrix);
         const imagePosition = new BABYLON.Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
 
-        this.camera.position = imagePosition.add(rotatedPositioningVector)
-        this.camera.target = imagePosition
+        this.animateTo(imagePosition.add(rotatedPositioningVector), imagePosition)
+
     }
 }
 export {TeleportingCamera}

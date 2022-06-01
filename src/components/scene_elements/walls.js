@@ -33,20 +33,20 @@ class Walls{
         const ambientLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, -1, 0), scene);
         ambientLight.intensity = 0.7
 
-        const sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
+        // const sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
         // const sunReflectionShadowGenerator = new BABYLON.ShadowGenerator(1024, sunReflection);
         // const room_mesh = scene.getMeshByName("Raum")
         //
-        for(let mesh of scene.meshes){
-            mesh.receiveShadows = true
-        }
+        // for(let mesh of scene.meshes){
+        //     mesh.receiveShadows = true
+        // }
 
 
         // let debugLineMesh = BABYLON.MeshBuilder.CreateLines("debug_line", {points: [new BABYLON.Vector3(0,0,0), new BABYLON.Vector3(0,0,0)]}, scene)
         scene.meshes.filter(mesh => mesh.name.includes("Wand") || mesh.name.includes("Raum")).forEach(mesh => {
             if (mesh.name.includes("Wand")){
                 // mesh.flipFaces(true)
-                sunShadowGenerator.getShadowMap().renderList.push(mesh);
+                // sunShadowGenerator.getShadowMap().renderList.push(mesh);
                 // sunReflectionShadowGenerator.getShadowMap().renderList.push(mesh);
             }
             mesh.actionManager = new BABYLON.ActionManager(scene)
