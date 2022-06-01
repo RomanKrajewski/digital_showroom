@@ -17,7 +17,7 @@
     </v-form>
     <div v-if="!editing">
       <v-card-title>{{ artwork.name }}</v-card-title>
-      <v-card-subtitle>{{artwork.width}} cm X {{artwork.height}} cm</v-card-subtitle>
+      <v-card-subtitle>{{artwork.height}} x {{artwork.width}} cm</v-card-subtitle>
       <v-card-subtitle v-if="artwork.sold">Verkauft</v-card-subtitle>
       <v-card-subtitle v-if="!artwork.sold">Verfügbar</v-card-subtitle>
     </div>
@@ -146,9 +146,8 @@ export default {
           file_name: file.name
         }})
       const put_url = response.data.url
-      const upload_response = await axios.put(put_url, file, {headers: {'Content-Type': ''}})
+      await axios.put(put_url, file, {headers: {'Content-Type': ''}})
       this.artwork.image_url = put_url.split("?")[0]
-      console.log(upload_response)
       this.uploading = false
     }
 

@@ -1,5 +1,6 @@
 import * as BABYLON from "babylonjs";
-import {SCALING_FACTOR} from "../../constants";
+import {SCALING_FACTOR} from "@/constants";
+import {getRotationBetweenVectors} from "@/utils";
 import axios from "axios";
 import ArtworkInfo from "../ArtworkInfo";
 class Walls{
@@ -17,10 +18,36 @@ class Walls{
         const positioningIndicator_material = new BABYLON.StandardMaterial("positioningIndicator_material", scene)
         positioningIndicator_material.alpha = 0.3
         positioningIndicator_material.material = positioningIndicator_material
+
+        //shadows
+        const sun = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(1, -1, 2), scene);
+        sun.intensity = 1.5
+
+        const sunReflection = new BABYLON.DirectionalLight("DirectionalLight2", new BABYLON.Vector3(-1, -1, -2), scene);
+        sunReflection.intensity = 0.7
+        // const sunReflection2 = new BABYLON.DirectionalLight("DirectionalLight3", new BABYLON.Vector3(1, 1, -1), scene);
+        // sunReflection2.intensity = 1
+        // const sunReflection3 = new BABYLON.DirectionalLight("DirectionalLight4", new BABYLON.Vector3(-1, 1, 1), scene);
+        // sunReflection3.intensity = 0.5
+
+        const ambientLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, -1, 0), scene);
+        ambientLight.intensity = 0.7
+
+        const sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
+        // const sunReflectionShadowGenerator = new BABYLON.ShadowGenerator(1024, sunReflection);
+        // const room_mesh = scene.getMeshByName("Raum")
+        //
+        for(let mesh of scene.meshes){
+            mesh.receiveShadows = true
+        }
+
+
         // let debugLineMesh = BABYLON.MeshBuilder.CreateLines("debug_line", {points: [new BABYLON.Vector3(0,0,0), new BABYLON.Vector3(0,0,0)]}, scene)
-        scene.meshes.filter(mesh => mesh.name.includes("Wand_vorne") || mesh.name.includes("ROOM")).forEach(mesh => {
-            if (mesh.name.includes("Wand_vorne")){
-                mesh.flipFaces(true)
+        scene.meshes.filter(mesh => mesh.name.includes("Wand") || mesh.name.includes("Raum")).forEach(mesh => {
+            if (mesh.name.includes("Wand")){
+                // mesh.flipFaces(true)
+                sunShadowGenerator.getShadowMap().renderList.push(mesh);
+                // sunReflectionShadowGenerator.getShadowMap().renderList.push(mesh);
             }
             mesh.actionManager = new BABYLON.ActionManager(scene)
             mesh.actionManager.registerAction(
@@ -33,28 +60,31 @@ class Walls{
                         const v1 = pointerInfo.pickInfo.getNormal(true)
                         // debugLineMesh.dispose()
                         // debugLineMesh = BABYLON.MeshBuilder.CreateLines("debug_line", {points: [pointerInfo.pickInfo.pickedPoint, pointerInfo.pickInfo.pickedPoint.add(v1)]}, scene)
-                        const v2 = new BABYLON.Vector3(0,0,1)
-                        const angle = Math.acos(BABYLON.Vector3.Dot(v1, v2));
-                        const axis = BABYLON.Vector3.Cross(v1,v2) ;
+                        const v2 = new BABYLON.Vector3(0,0,-1)
+                        const axisAngle = getRotationBetweenVectors(v1, v2)
+
                         this.positioningIndicator.rotation = new BABYLON.Vector3(0,0,0)
-                        this.positioningIndicator.rotate(axis, angle)
+                        this.positioningIndicator.rotate(axisAngle[0], axisAngle[1])
 
                     }
                 }
                 if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERTAP && this.positioningIndicator.isEnabled()){
-                    const rotation_vector = this.positioningIndicator.rotationQuaternion.toEulerAngles()
-                    let newOrientationVector = {
+                    // const rotation_vector = this.positioningIndicator.rotationQuaternion.toEulerAngles()
+                    const rotation_vector = this.positioningIndicator.rotationQuaternion
+                    // console.log(this.positioningIndicator.rotationQuaternion)
+                    let newOrientationQuaternion = {
                         x: rotation_vector.x,
                         y: rotation_vector.y,
                         z: rotation_vector.z,
+                        w: rotation_vector.w
                     }
                     let newPositionVector = {
                         x: this.positioningIndicator.position.x,
                         y: this.positioningIndicator.position.y,
                         z: this.positioningIndicator.position.z,
                     }
-                    if(JSON.stringify(newOrientationVector) !== JSON.stringify(this.currentArtwork.orientation_vector) || JSON.stringify(newPositionVector) !== JSON.stringify(this.currentArtwork.position_vector)){
-                        this.currentArtwork.orientation_vector = newOrientationVector
+                    if(JSON.stringify(newOrientationQuaternion) !== JSON.stringify(this.currentArtwork.orientation_quaternion) || JSON.stringify(newPositionVector) !== JSON.stringify(this.currentArtwork.position_vector)){
+                        this.currentArtwork.orientation_quaternion = newOrientationQuaternion
                         this.currentArtwork.position_vector = newPositionVector
                         axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${this.currentArtwork.id}`, this.currentArtwork).then(
                             () => {
@@ -88,13 +118,14 @@ class Walls{
         }
         const artworkList = artworks.map((artwork_id) => {return {id:artwork_id}})
         for await (const artworkDetails of artworkList.map(artwork => ArtworkInfo.methods.fetchArtworkInfo(artwork))){
-            if(!artworkDetails.position_vector||!artworkDetails.orientation_vector){
+            if(!artworkDetails.position_vector||!artworkDetails.orientation_quaternion){
                 continue
             }
             const artworkMesh = this.createArtworkMesh(artworkDetails)
 
             artworkMesh.position = new BABYLON.Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
-            artworkMesh.rotation = new BABYLON.Vector3(artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.z)
+            // artworkMesh.rotation = new BABYLON.Vector3(artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.z)
+            artworkMesh.rotationQuaternion = new BABYLON.Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
             artworkMesh.actionManager = new BABYLON.ActionManager(this.scene)
             artworkMesh.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
@@ -135,7 +166,7 @@ class Walls{
         let faceUV = []
         for (let i = 0; i < 6; i++) {
             if (i === 0 ){
-                faceUV[i] = new BABYLON.Vector4(1, 1, 0, 0);
+                faceUV[i] = new BABYLON.Vector4(0, 0, 0, 0);
             }
             else if(i===1){
                 faceUV[i] = new BABYLON.Vector4(0,0,1,1)

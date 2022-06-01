@@ -14,6 +14,16 @@ class ArtworkDto:
         }
     )
 
+    quaternion = api.model(
+        "Quaternion Object",
+        {
+            "x": fields.Float,
+            "y": fields.Float,
+            "z": fields.Float,
+            "w": fields.Float
+        }
+    )
+
     artwork = api.model(
         "Artwork Object",
         {
@@ -25,7 +35,7 @@ class ArtworkDto:
             "sold": fields.Boolean(required=True),
             "added_date": fields.DateTime,
             "position_vector": fields.Nested(vector),
-            "orientation_vector": fields.Nested(vector)
+            "orientation_quaternion": fields.Nested(quaternion)
         },
     )
 

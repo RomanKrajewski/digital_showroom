@@ -73,7 +73,8 @@ class TeleportingCamera {
         const half_h = artworkDetails.height*SCALING_FACTOR/200;
         const l = half_h/Math.atan(this.camera.fov/2);
         const cameraPositioningVector = new BABYLON.Vector3(0,0,-l)
-        const yprQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.z)
+        // const yprQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.z)
+        const yprQuaternion = new BABYLON.Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
         const rotationMatrix = new BABYLON.Matrix();
         yprQuaternion.toRotationMatrix(rotationMatrix);
         const rotatedPositioningVector = BABYLON.Vector3.TransformCoordinates(cameraPositioningVector, rotationMatrix);

@@ -58,7 +58,7 @@ export default {
       new Ground(scene, this.teleportingCamera)
       this.walls = new Walls(scene, this)
       this.walls.loadArtworks()
-      scene.environmentTexture = new BABYLON.HDRCubeTexture(`${process.env.VUE_APP_BACKEND_URL}/static/quarry.hdr`, scene, 128, false, true, false, true);
+      // scene.environmentTexture = new BABYLON.HDRCubeTexture(`${process.env.VUE_APP_BACKEND_URL}/static/quarry.hdr`, scene, 128, false, true, false, true);
 
       engine.runRenderLoop(function (){
         scene.render();
@@ -73,7 +73,6 @@ export default {
       this.$emit('artwork-hover-enter', artwork)
     },
     cameraTargetArtwork: function(artwork){
-      console.log(artwork)
       this.teleportingCamera.targetArtwork(artwork)
     }
   },

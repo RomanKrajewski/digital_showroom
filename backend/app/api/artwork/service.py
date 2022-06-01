@@ -7,6 +7,7 @@ from app.utils import message, err_resp, internal_err_resp
 from app.models.artwork import Artwork
 from app.models.vector import Vector
 from app.models.schemas import ArtworkSchema
+from app.models.quaternion import Quaternion
 
 
 class ArtworkService:
@@ -82,11 +83,11 @@ class ArtworkService:
                 db.session.flush()
                 new_artwork.position_vector_id = vector.id
 
-            if orientation_vector := data.get("orientation_vector", None):
-                vector = Vector(x=orientation_vector["x"], y=orientation_vector["y"], z=orientation_vector["z"])
-                db.session.add(vector)
+            if orientation_quaternion := data.get("orientation_quaternion", None):
+                quaternion = Quaternion(x=orientation_quaternion["x"], y=orientation_quaternion["y"], z=orientation_quaternion["z"], w= orientation_quaternion["w"])
+                db.session.add(quaternion)
                 db.session.flush()
-                new_artwork.orientation_vector_id = vector.id
+                new_artwork.orientation_quaternion_id = quaternion.id
 
             schema = ArtworkSchema()
             artwork_info = schema.dump(new_artwork)
@@ -146,18 +147,19 @@ class ArtworkService:
                         vector.y = position_vector["y"]
                         vector.z = position_vector["z"]
 
-            if orientation_vector := data.get("orientation_vector", None):
-                if not artwork.orientation_vector:
-                    vector = Vector(x=orientation_vector["x"], y=orientation_vector["y"], z=orientation_vector["z"])
-                    db.session.add(vector)
+            if orientation_quaternion := data.get("orientation_quaternion", None):
+                if not artwork.orientation_quaternion:
+                    quaternion = Quaternion(x=orientation_quaternion["x"], y=orientation_quaternion["y"], z=orientation_quaternion["z"], w=orientation_quaternion["w"])
+                    db.session.add(quaternion)
                     db.session.flush()
-                    artwork.orientation_vector_id = vector.id
+                    artwork.orientation_quaternion_id = quaternion.id
                 else:
-                    vector = Vector.query.filter_by(id=artwork.orientation_vector_id).first()
-                    if not vector.compareWithDict(position_vector):
-                        vector.x = orientation_vector["x"]
-                        vector.y = orientation_vector["y"]
-                        vector.z = orientation_vector["z"]
+                    quaternion = Quaternion.query.filter_by(id=artwork.orientation_quaternion_id).first()
+                    if not quaternion.compareWithDict(orientation_quaternion):
+                        quaternion.x = orientation_quaternion["x"]
+                        quaternion.y = orientation_quaternion["y"]
+                        quaternion.z = orientation_quaternion["z"]
+                        quaternion.w = orientation_quaternion["w"]
 
 
             db.session.commit()

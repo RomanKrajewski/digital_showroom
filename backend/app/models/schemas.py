@@ -14,13 +14,18 @@ class VectorSchema(Schema):
     z = fields.Float()
     # class Meta:
     #     fields = ["id", "x", "y", "z"]
+class QuaternionSchema(Schema):
+    x = fields.Float()
+    y = fields.Float()
+    z = fields.Float()
+    w = fields.Float()
 
 class ArtworkSchema(Schema):
     class Meta:
-        fields = ("id", "name", "width", "height", "sold", "added_date", "image_url", "orientation_vector", "position_vector")
+        fields = ("id", "name", "width", "height", "sold", "added_date", "image_url", "orientation_quaternion", "position_vector")
 
-    orientation_vector = fields.Nested(VectorSchema(only=["x", "y", "z"]))
-    position_vector = fields.Nested(VectorSchema())
+    orientation_quaternion = fields.Nested(QuaternionSchema(only=["x", "y", "z", "w"]))
+    position_vector = fields.Nested(VectorSchema(only=["x", "y", "z"]))
 
 
 class LoginSchema(Schema):

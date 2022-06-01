@@ -11,7 +11,7 @@ class Ground{
         move_indicator.material = move_indicator_material
         // Our built-in 'ground' shape.
 
-        const ground = scene.getMeshByName('floor_Baked')
+        const ground = scene.getMeshByName('Floor_Baked')
         ground.actionManager = new BABYLON.ActionManager(scene)
 
         ground.actionManager.registerAction(
