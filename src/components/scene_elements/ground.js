@@ -16,7 +16,11 @@ class Ground{
 
         ground.actionManager.registerAction(
             new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
-                function () {move_indicator.setEnabled(true)}))
+                function () {
+                move_indicator.setEnabled(true)
+                scene.hoverCursor = 'none'
+            }))
+
         scene.onPointerObservable.add((pointerInfo) => {
             if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERMOVE) {
                 if(pointerInfo.pickInfo.pickedPoint){
@@ -29,7 +33,10 @@ class Ground{
         })
         ground.actionManager.registerAction(
             new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOutTrigger},
-                function () {move_indicator.setEnabled(false)}))
+                function () {
+                    move_indicator.setEnabled(false)
+                    scene.hoverCursor = 'default'
+                }))
     }
 
 }

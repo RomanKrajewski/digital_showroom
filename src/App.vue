@@ -6,7 +6,7 @@
       dark
     >
 
-      <h4>Digital Showroom</h4>
+<!--      <h4>Digital Showroom</h4>-->
 
       <v-spacer></v-spacer>
 

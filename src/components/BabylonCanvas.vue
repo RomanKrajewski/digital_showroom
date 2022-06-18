@@ -20,6 +20,7 @@ export default {
       scene: null,
       walls: null,
       teleportingCamera: null,
+      pointerDown: false,
     }
   },
   watch:{
@@ -64,6 +65,20 @@ export default {
         scene.render();
       });
 
+      scene.onPointerObservable.add((pointerInfo)=>{
+        if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERDOWN){
+          this.pointerDown = true
+        }
+        if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERUP){
+          this.pointerDown = false
+        }
+        if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERMOVE && this.pointerDown){
+          this.teleportingCamera.animateToDefaultHeight()
+          this.artworkFocused(null)
+        }
+      }
+      )
+
       return scene;
     },
     artworkPositioned: function() {
@@ -71,6 +86,9 @@ export default {
     },
     artworkHoverEnter: function(artwork){
       this.$emit('artwork-hover-enter', artwork)
+    },
+    artworkFocused: function(artwork){
+      this.$emit('artwork-focused', artwork)
     },
     cameraTargetArtwork: function(artwork){
       this.teleportingCamera.targetArtwork(artwork)
@@ -81,6 +99,7 @@ export default {
 
     this.engine =  new BABYLON.Engine(this.$refs.canvas, true);
     this.load_scene(this.engine, this.$refs.canvas);
+
 
   }
 }

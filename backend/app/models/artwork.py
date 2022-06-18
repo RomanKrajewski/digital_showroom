@@ -22,10 +22,8 @@ class Artwork(Model):
     orientation_quaternion = db.relationship("Quaternion", foreign_keys=[orientation_quaternion_id])
     added_date = Column(db.DateTime, default=datetime.utcnow)
 
-
     def __init__(self, **kwargs):
         super(Artwork, self).__init__(**kwargs)
 
     def __repr__(self):
         return f"<Artwork {self.name}>"
-

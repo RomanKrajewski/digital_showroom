@@ -144,6 +144,7 @@ class Walls{
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPickTrigger},
                     () => {
                         this.parentComponent.cameraTargetArtwork(artworkDetails)
+                        this.parentComponent.artworkFocused(artworkDetails)
                     })
             )
             artworkMeshes.push({mesh: artworkMesh, artwork: artworkDetails} )

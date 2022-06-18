@@ -1,12 +1,12 @@
 import * as BABYLON from "babylonjs";
 
 import {SCALING_FACTOR} from "@/constants";
-
+const CAMERA_DEFAULT_HEIGHT = 1.20 * SCALING_FACTOR
 class TeleportingCamera {
     constructor(scene, canvas) {
 
         this.scene = scene;
-        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 1.20 * SCALING_FACTOR, 0),this.scene);
+        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, CAMERA_DEFAULT_HEIGHT, 0),this.scene);
 
         this.camera.attachControl(canvas, true);
         this.camera.minZ = 0.1
@@ -43,6 +43,10 @@ class TeleportingCamera {
         this.animateTo(new BABYLON.Vector3(newCameraX, this.camera.position.y, newCameraZ));
     }
 
+    animateToDefaultHeight(){
+        this.animateTo(new BABYLON.Vector3(this.camera.position.x, CAMERA_DEFAULT_HEIGHT, this.camera.position.z))
+    }
+
     animateTo(cameraPosition, cameraTarget = null) {
         const positionAnimation = new BABYLON.Animation(
             "camera",
@@ -60,13 +64,20 @@ class TeleportingCamera {
         });
 
         keys.push({
-            frame: 20,
+            frame: 75,
             value: cameraPosition,
         });
 
         positionAnimation.setKeys(keys);
         this.camera.animations = [];
+// Creating an easing function
+        let easingFunction = new BABYLON.QuadraticEase();
 
+// For each easing function, you can choose between EASEIN (default), EASEOUT, EASEINOUT
+        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+
+// Adding the easing function to the animation
+        positionAnimation.setEasingFunction(easingFunction);
         this.camera.animations.push(positionAnimation);
 
         if(cameraTarget){
@@ -86,16 +97,23 @@ class TeleportingCamera {
             });
 
             keys.push({
-                frame: 20,
+                frame: 75,
                 value: cameraTarget,
             });
 
             targetAnimation.setKeys(keys);
+            // Creating an easing function
+            let easingFunction = new BABYLON.QuadraticEase();
 
+            // For each easing function, you can choose between EASEIN (default), EASEOUT, EASEINOUT
+            easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+
+            // Adding the easing function to the animation
+            targetAnimation.setEasingFunction(easingFunction);
             this.camera.animations.push(targetAnimation);
         }
 
-        this.scene.beginAnimation(this.camera, 0, 20, false, 1);
+        this.scene.beginAnimation(this.camera, 0, 75, false, 1);
     }
 
     targetArtwork(artworkDetails){
