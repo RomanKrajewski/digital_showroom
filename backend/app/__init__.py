@@ -6,7 +6,7 @@ This module:
 - Registers extensions
 """
 
-from flask import Flask
+from flask import Flask, send_from_directory
 
 # Import extensions
 from .extensions import bcrypt, cors, db, jwt, ma
@@ -24,12 +24,23 @@ def create_app(config_name):
     # Register blueprints
     from .auth import auth_bp
 
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(auth_bp, url_prefix="/auth")
 
     from .api import api_bp
 
     app.register_blueprint(api_bp, url_prefix="/api")
 
+    @app.route('/static/<path:path>')
+    def static_a(path):
+        return send_from_directory('static', path)
+
+    @app.route('/')
+    def index():
+        return send_from_directory('static/dist', 'index.html')
+
+    @app.route('/<path:path>')
+    def static_b(path):
+        return send_from_directory('static/dist', path)
 
     return app
 

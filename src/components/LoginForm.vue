@@ -43,7 +43,7 @@ export default {
   methods:{
     login: async function (){
       try{
-        await axios.post(`${process.env.VUE_APP_BACKEND_URL}/auth/login`, this.user)
+        await axios.post(`${process.env.VUE_APP_BACKEND_URL}/auth/admin/login`, this.user)
         axios.defaults.headers.common['X-CSRF-TOKEN'] = getCookie('csrf_access_token');
         this.userStore.login(this.user.email)
         this.auth_failed = false
@@ -55,7 +55,7 @@ export default {
 
     },
     logout: async function(){
-      await axios.get(`${process.env.VUE_APP_BACKEND_URL}/auth/logout`)
+      await axios.get(`${process.env.VUE_APP_BACKEND_URL}/auth/admin/logout`)
       axios.defaults.headers.common['X-CSRF-TOKEN'] = ''
       this.userStore.logout()
     }
