@@ -19,36 +19,14 @@ class Walls{
         positioningIndicator_material.alpha = 0.3
         positioningIndicator_material.material = positioningIndicator_material
 
-        //shadows
-        const sun = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(1, -1, 2), scene);
-        sun.intensity = 1.5
-
-        const sunReflection = new BABYLON.DirectionalLight("DirectionalLight2", new BABYLON.Vector3(-1, -1, -2), scene);
-        sunReflection.intensity = 0.7
-        // const sunReflection2 = new BABYLON.DirectionalLight("DirectionalLight3", new BABYLON.Vector3(1, 1, -1), scene);
-        // sunReflection2.intensity = 1
-        // const sunReflection3 = new BABYLON.DirectionalLight("DirectionalLight4", new BABYLON.Vector3(-1, 1, 1), scene);
-        // sunReflection3.intensity = 0.5
-
-        const ambientLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, -1, 0), scene);
-        ambientLight.intensity = 0.7
-
-        // const sunShadowGenerator = new BABYLON.ShadowGenerator(1024, sun);
-        // const sunReflectionShadowGenerator = new BABYLON.ShadowGenerator(1024, sunReflection);
-        // const room_mesh = scene.getMeshByName("Raum")
-        //
-        // for(let mesh of scene.meshes){
-        //     mesh.receiveShadows = true
-        // }
+        const hemi1 = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, -1, 0), scene);
+        hemi1.intensity = 1;
+        hemi1.groundColor = new BABYLON.Color3(1,1,1);
+        hemi1.specular = BABYLON.Color3.Black();
 
 
-        // let debugLineMesh = BABYLON.MeshBuilder.CreateLines("debug_line", {points: [new BABYLON.Vector3(0,0,0), new BABYLON.Vector3(0,0,0)]}, scene)
+
         scene.meshes.filter(mesh => mesh.name.includes("Wand") || mesh.name.includes("Raum")).forEach(mesh => {
-            if (mesh.name.includes("Wand")){
-                // mesh.flipFaces(true)
-                // sunShadowGenerator.getShadowMap().renderList.push(mesh);
-                // sunReflectionShadowGenerator.getShadowMap().renderList.push(mesh);
-            }
             mesh.actionManager = new BABYLON.ActionManager(scene)
             mesh.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
@@ -58,8 +36,6 @@ class Walls{
                     if(pointerInfo.pickInfo.pickedPoint){
                         this.positioningIndicator.position = pointerInfo.pickInfo.pickedPoint;
                         const v1 = pointerInfo.pickInfo.getNormal(true)
-                        // debugLineMesh.dispose()
-                        // debugLineMesh = BABYLON.MeshBuilder.CreateLines("debug_line", {points: [pointerInfo.pickInfo.pickedPoint, pointerInfo.pickInfo.pickedPoint.add(v1)]}, scene)
                         const v2 = new BABYLON.Vector3(0,0,-1)
                         const axisAngle = getRotationBetweenVectors(v1, v2)
 
@@ -69,9 +45,7 @@ class Walls{
                     }
                 }
                 if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERTAP && this.positioningIndicator.isEnabled()){
-                    // const rotation_vector = this.positioningIndicator.rotationQuaternion.toEulerAngles()
                     const rotation_vector = this.positioningIndicator.rotationQuaternion
-                    // console.log(this.positioningIndicator.rotationQuaternion)
                     let newOrientationQuaternion = {
                         x: rotation_vector.x,
                         y: rotation_vector.y,
