@@ -78,6 +78,7 @@ export default {
         }
       }
       )
+      scene.clearColor = new BABYLON.Color3(1, 1, 1);
 
       return scene;
     },
