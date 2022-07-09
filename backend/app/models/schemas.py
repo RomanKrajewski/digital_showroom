@@ -1,5 +1,5 @@
 # Validations with Marshmallow
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, pre_dump, post_dump
 from marshmallow.validate import Regexp, Length
 
 
@@ -21,6 +21,14 @@ class QuaternionSchema(Schema):
     w = fields.Float()
 
 class ArtworkSchema(Schema):
+
+    @post_dump
+    def remove_skip_values(self, data, **kwargs):
+        return {
+            key: value for key, value in data.items()
+            if value is not None
+        }
+
     class Meta:
         fields = ("id", "name", "width", "height", "sold", "added_date", "image_url", "orientation_quaternion", "position_vector")
 
