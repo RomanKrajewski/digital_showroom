@@ -53,12 +53,28 @@ export default {
 #addArtworkButton{
   position: fixed;
   right:20px;
-  top:84px;
+  top:96px;
 }
 
 #artworkList{
+  margin-top: 64px;
   height: calc(100vh - 64px);
   overflow: scroll;
   overflow-x: hidden;
+  margin-left: 0;
+  margin-right: 0;
+}
+#artworkList:after {
+  content  : "";
+  position : absolute;
+  z-index  : 1;
+  top   : 64px;
+  left     : 0;
+  pointer-events   : none;
+  background-image : linear-gradient(to top,
+  rgba(255,255,255, 0),
+  rgba(255,255,255, 1) 90%);
+  width    : 100%;
+  height   : 2em;
 }
 </style>

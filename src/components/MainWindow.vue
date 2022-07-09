@@ -5,7 +5,7 @@
           <v-col cols="12" class="ma-0 pa-0">
               <babylon-canvas :updating-artwork="updatingArtwork" :positioning-artwork="positioningArtwork" @artwork-focused="initFocusInfo" @artwork-hover-enter="initHoverInfo" @artwork-positioned="positioningArtwork = null"></babylon-canvas>
           </v-col>
-          <v-col cols="12" sm="6" md="4" xl="2" id="right_pane_root" class="ma-0 pa-0">
+          <v-col v-if="show_navigation || show_login" cols="12" sm="6" md="4" xl="2" id="right_pane_root" class="ma-0 pa-0">
             <artwork-list @artwork-updated="updateArtwork" @positioning="initPositioningArtwork" v-if="show_navigation"></artwork-list>
             <login-form v-if="show_login"></login-form>
           </v-col>
@@ -71,9 +71,13 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #right_pane_root{
+  transform: translateX(0);
   position: fixed;
-  right: 0;
+  left: 0;
+  top: 0;
   background: white;
+  height: 100vh;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 </style>
 

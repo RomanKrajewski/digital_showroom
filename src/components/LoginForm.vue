@@ -1,5 +1,5 @@
 <template>
-<v-card id="login_root" class="pa-2">
+<v-container id="login_root" class="pa-2">
   <v-col v-if="userStore.isLoggedIn" >
     <h2>Eingeloggt als {{userStore.user}}</h2>
     <v-btn @click="logout">Logout</v-btn>
@@ -16,7 +16,7 @@
     <v-text-field label="Passwort" v-model="user.password" type="password" required ></v-text-field>
     <v-btn color="primary" @click="login"> Login</v-btn>
   </v-col>
-</v-card>
+</v-container>
 </template>
 
 <script>
@@ -64,4 +64,8 @@ export default {
 </script>
 
 <style scoped>
+#login_root{
+  margin-top: 64px;
+  left: 0;
+}
 </style>
