@@ -6,10 +6,10 @@
       <v-container id="button_container">
           <v-row cols="12">
 
-            <v-btn icon variant="flat"  v-on:click="toggleLogin">
+            <v-btn icon variant="flat" color="transparent" v-on:click="toggleLogin">
               <v-icon>mdi-account-circle</v-icon>
             </v-btn>
-            <v-btn icon variant="flat" v-on:click="toggleNavigation">
+            <v-btn icon variant="flat" color="transparent" v-on:click="toggleNavigation">
               <v-icon>mdi-menu</v-icon>
             </v-btn>
           </v-row>

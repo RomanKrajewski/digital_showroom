@@ -1,5 +1,8 @@
 <template>
   <div>
+    <v-overlay :model-value="overlay" contained class="align-center justify-center">
+      <h1>Lade...</h1>
+    </v-overlay>
     <canvas class="ma-0" ref = 'canvas' ></canvas>
   </div>
 </template>
@@ -21,11 +24,13 @@ export default {
       walls: null,
       teleportingCamera: null,
       pointerDown: false,
+      overlay: false,
     }
   },
   watch:{
     positioningArtwork(newArtwork){
       if (newArtwork){
+        this.overlay=true
         this.walls.positionArtwork(newArtwork)
       }
     },
@@ -93,6 +98,9 @@ export default {
     },
     cameraTargetArtwork: function(artwork){
       this.teleportingCamera.targetArtwork(artwork)
+    },
+    positioningInitialized: function(){
+      this.overlay = false
     }
   },
   mounted() {

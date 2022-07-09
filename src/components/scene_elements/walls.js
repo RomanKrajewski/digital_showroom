@@ -9,6 +9,7 @@ class Walls{
     scene
     loadedArtworks = []
     parentComponent
+    wasLastOverWall=false
     constructor(scene, parentComponent) {
         this.parentComponent = parentComponent
         this.scene = scene
@@ -24,57 +25,64 @@ class Walls{
         hemi1.groundColor = new BABYLON.Color3(1,1,1);
         hemi1.specular = BABYLON.Color3.Black();
 
+        scene.onPointerObservable.add((pointerInfo) => {
+            if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERMOVE) {
+                if(pointerInfo.pickInfo.pickedPoint){
+                    this.positioningIndicator.position = pointerInfo.pickInfo.pickedPoint;
+                    const v1 = pointerInfo.pickInfo.getNormal(true)
+                    const v2 = new BABYLON.Vector3(0,0,-1)
+                    const axisAngle = getRotationBetweenVectors(v1, v2)
 
+                    this.positioningIndicator.rotation = new BABYLON.Vector3(0,0,0)
+                    this.positioningIndicator.rotate(axisAngle[0], axisAngle[1])
+
+                }
+            }
+            if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERTAP && this.positioningIndicator.isEnabled()){
+                const rotation_vector = this.positioningIndicator.rotationQuaternion
+                let newOrientationQuaternion = {
+                    x: rotation_vector.x,
+                    y: rotation_vector.y,
+                    z: rotation_vector.z,
+                    w: rotation_vector.w
+                }
+                let newPositionVector = {
+                    x: this.positioningIndicator.position.x,
+                    y: this.positioningIndicator.position.y,
+                    z: this.positioningIndicator.position.z,
+                }
+                if(JSON.stringify(newOrientationQuaternion) !== JSON.stringify(this.currentArtwork.orientation_quaternion) || JSON.stringify(newPositionVector) !== JSON.stringify(this.currentArtwork.position_vector)){
+                    this.currentArtwork.orientation_quaternion = newOrientationQuaternion
+                    this.currentArtwork.position_vector = newPositionVector
+                    axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${this.currentArtwork.id}`, this.currentArtwork).then(
+                        () => {
+                            this.positioningIndicator.setEnabled(false)
+                            this.updateArtwork(this.currentArtwork)
+                            this.currentArtwork = null
+                            this.positioningIndicator.dispose()
+                            this.parentComponent.artworkPositioned()
+                        }
+                    )
+                }
+            }
+        })
 
         scene.meshes.filter(mesh => mesh.name.includes("Wand") || mesh.name.includes("Raum")).forEach(mesh => {
             mesh.actionManager = new BABYLON.ActionManager(scene)
+
             mesh.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
-                     () => {if (this.currentArtwork) this.positioningIndicator.setEnabled(true)}))
-            scene.onPointerObservable.add((pointerInfo) => {
-                if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERMOVE) {
-                    if(pointerInfo.pickInfo.pickedPoint){
-                        this.positioningIndicator.position = pointerInfo.pickInfo.pickedPoint;
-                        const v1 = pointerInfo.pickInfo.getNormal(true)
-                        const v2 = new BABYLON.Vector3(0,0,-1)
-                        const axisAngle = getRotationBetweenVectors(v1, v2)
+                    () => {
+                        this.wasLastOverWall = true
+                        if (this.currentArtwork) {
+                            this.positioningIndicator.setEnabled(true)
+                        }}))
 
-                        this.positioningIndicator.rotation = new BABYLON.Vector3(0,0,0)
-                        this.positioningIndicator.rotate(axisAngle[0], axisAngle[1])
-
-                    }
-                }
-                if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERTAP && this.positioningIndicator.isEnabled()){
-                    const rotation_vector = this.positioningIndicator.rotationQuaternion
-                    let newOrientationQuaternion = {
-                        x: rotation_vector.x,
-                        y: rotation_vector.y,
-                        z: rotation_vector.z,
-                        w: rotation_vector.w
-                    }
-                    let newPositionVector = {
-                        x: this.positioningIndicator.position.x,
-                        y: this.positioningIndicator.position.y,
-                        z: this.positioningIndicator.position.z,
-                    }
-                    if(JSON.stringify(newOrientationQuaternion) !== JSON.stringify(this.currentArtwork.orientation_quaternion) || JSON.stringify(newPositionVector) !== JSON.stringify(this.currentArtwork.position_vector)){
-                        this.currentArtwork.orientation_quaternion = newOrientationQuaternion
-                        this.currentArtwork.position_vector = newPositionVector
-                        axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${this.currentArtwork.id}`, this.currentArtwork).then(
-                            () => {
-                                this.positioningIndicator.setEnabled(false)
-                                this.updateArtwork(this.currentArtwork)
-                                this.currentArtwork = null
-                                this.positioningIndicator.dispose()
-                                this.parentComponent.artworkPositioned()
-                            }
-                        )
-                    }
-                }
-            })
             mesh.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOutTrigger},
-                    () => { this.positioningIndicator.setEnabled(false)}))
+                    () => {
+                        this.wasLastOverWall = false
+                        this.positioningIndicator.setEnabled(false)}))
 
         })
     }
@@ -123,18 +131,22 @@ class Walls{
             )
             artworkMeshes.push({mesh: artworkMesh, artwork: artworkDetails} )
         }
-        this.loadedArtworks = artworkMeshes
+        this.loadedArtworks = this.loadedArtworks.concat(artworkMeshes)
     }
 
     updateArtwork = (artwork) => {
         this.loadArtworks([artwork.id])
     }
 
-    positionArtwork = (artworkToPosition) => {
+    positionArtwork = (artworkToPosition) =>  {
         this.positioningIndicator.dispose()
         this.currentArtwork = artworkToPosition
         this.positioningIndicator = this.createArtworkMesh(artworkToPosition)
-        this.positioningIndicator.setEnabled(false)
+
+        this.positioningIndicator.position.x = 1000
+        this.positioningIndicator.position.y = 1000
+        this.positioningIndicator.setEnabled(this.wasLastOverWall)
+
     }
 
     createArtworkMesh = (artwork) => {
@@ -162,7 +174,7 @@ class Walls{
         let artworkMesh = BABYLON.MeshBuilder.CreateBox('box', options, this.scene);
 
         const mat = new BABYLON.StandardMaterial("mat", this.scene);
-        mat.diffuseTexture = new BABYLON.Texture(artwork.image_url, this.scene);
+        mat.diffuseTexture = new BABYLON.Texture(artwork.image_url, this.scene, false, true, BABYLON.Texture.CUBIC_MODE,()=> {this.parentComponent.positioningInitialized()});
         mat.diffuseColor = new BABYLON.Color3(1, 0, 1);
         mat.specularColor = new BABYLON.Color3(0.5, 0.6, 0.87);
         mat.emissiveColor = new BABYLON.Color3(1, 1, 1);
