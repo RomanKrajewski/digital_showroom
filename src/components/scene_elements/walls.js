@@ -150,9 +150,11 @@ class Walls{
                 faceUV[i] = new BABYLON.Vector4(0, 0, 0, 0);
             }
         }
+        const meshWidth = SCALING_FACTOR * artwork.width / 100;
+        const meshHeight =SCALING_FACTOR * artwork.height / 100;
         const options = {
-            width: SCALING_FACTOR * artwork.width / 100 ,
-            height: SCALING_FACTOR * artwork.height / 100,
+            width:  meshWidth,
+            height: meshHeight,
             depth: 0.06,
             faceUV:faceUV
         };
@@ -167,6 +169,19 @@ class Walls{
         mat.ambientColor = new BABYLON.Color3(0.23, 0.98, 0.53);
         artworkMesh.material = mat;
 
+        const artworkShadow = BABYLON.MeshBuilder.CreatePlane('meshShadow', {width: meshWidth * 1.07, height: meshHeight*1.07})
+        // artworkShadow.position.x += 0.05
+        // artworkShadow.position.y -=0.05
+        artworkShadow.position.z -=0.001
+        artworkShadow.setParent(artworkMesh)
+        const black = new BABYLON.Color3(0,0,0)
+        const shadowMat = new BABYLON.StandardMaterial('shadowMat', this.scene);
+        shadowMat.diffuseColor = black
+        shadowMat.specularColor = black;
+        shadowMat.emissiveColor = black;
+        shadowMat.ambientColor = black;
+        shadowMat.opacityTexture = new BABYLON.Texture(`${process.env.VUE_APP_BACKEND_URL}/static/shadow.png`, this.scene),
+        artworkShadow.material = shadowMat
         if (artwork.sold){
             const red_dot = this.createRedDot()
             red_dot.position = new BABYLON.Vector3(artworkMesh.position.x + (artwork.width/2 + 5) * SCALING_FACTOR / 100, artworkMesh.position.y - (artwork.height /2 - 2.5) * SCALING_FACTOR /100, artworkMesh.position.z )
