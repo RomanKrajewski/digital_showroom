@@ -5973,7 +5973,7 @@ vue@^3.0.0-beta.1:
     "@vue/server-renderer" "3.2.37"
     "@vue/shared" "3.2.37"
 
-vuetify-loader@^2.0.0-alpha.11:
+vuetify-loader@^2.0.0-alpha.9:
   version "2.0.0-alpha.9"
   resolved "https://registry.yarnpkg.com/vuetify-loader/-/vuetify-loader-2.0.0-alpha.9.tgz#0a108b1ac11fc8af63046b16321505b444c04746"
   integrity sha512-M4u2XX9coe1U51jLKek54eJTo7wnroNfglh6sQplRTslhQRKQM3k84oh87D0VHqTzoTzlKPHP0sIWdpklwaEEQ==
