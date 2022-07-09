@@ -178,11 +178,15 @@ class Walls{
     createRedDot = () => {
         const red_dot = BABYLON.MeshBuilder.CreateCylinder("red_dot", {diameter: 0.02 * SCALING_FACTOR, height: 0.02 *SCALING_FACTOR}, this.scene);
         red_dot.rotate(new BABYLON.Vector3(1,0,0), BABYLON.Angle.FromDegrees(90).radians())
-
-        const move_indicator_material = new BABYLON.StandardMaterial("move_indicator_material", this.scene)
-        move_indicator_material.emissiveColor = new BABYLON.Color3(0.8, 0.2, 0.2);
-        move_indicator_material.alpha = 1
-        red_dot.material = move_indicator_material
+        const red = new BABYLON.Color3(0.6, 0.1, 0.1);
+        const red_dot_material = new BABYLON.StandardMaterial("red_dot_material", this.scene)
+        red_dot_material.emissiveColor = red;
+        red_dot_material.diffuseColor = red;
+        red_dot_material.specularColor = red;
+        red_dot_material.emissiveColor = red;
+        red_dot_material.ambientColor = red;
+        red_dot_material.alpha = 1
+        red_dot.material = red_dot_material
 
         return red_dot
     }
