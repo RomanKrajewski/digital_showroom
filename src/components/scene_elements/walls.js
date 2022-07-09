@@ -169,7 +169,7 @@ class Walls{
         mat.ambientColor = new BABYLON.Color3(0.23, 0.98, 0.53);
         artworkMesh.material = mat;
 
-        const artworkShadow = BABYLON.MeshBuilder.CreatePlane('meshShadow', {width: meshWidth * 1.07, height: meshHeight*1.07})
+        const artworkShadow = BABYLON.MeshBuilder.CreatePlane('meshShadow', {width: meshWidth * 1.1, height: meshHeight*1.1})
         // artworkShadow.position.x += 0.05
         // artworkShadow.position.y -=0.05
         artworkShadow.position.z -=0.001
@@ -180,7 +180,11 @@ class Walls{
         shadowMat.specularColor = black;
         shadowMat.emissiveColor = black;
         shadowMat.ambientColor = black;
-        shadowMat.opacityTexture = new BABYLON.Texture(`${process.env.VUE_APP_BACKEND_URL}/static/shadow.png`, this.scene),
+        if (artwork.width < 99 || artwork.height < 99){
+            shadowMat.opacityTexture = new BABYLON.Texture(`${process.env.VUE_APP_BACKEND_URL}/static/shadow_small.png`, this.scene)
+        }else{
+            shadowMat.opacityTexture = new BABYLON.Texture(`${process.env.VUE_APP_BACKEND_URL}/static/shadow.png`, this.scene)
+        }
         artworkShadow.material = shadowMat
         if (artwork.sold){
             const red_dot = this.createRedDot()
