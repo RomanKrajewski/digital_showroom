@@ -59,6 +59,7 @@ export default {
         this.focusedArtwork = artwork
       }else{
         this.showFocusInfo = false
+        this.focusedArtwork = null
       }
     }
 
