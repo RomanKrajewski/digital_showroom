@@ -58,7 +58,7 @@ export default {
       })
     },
     setup_scene: function(scene, canvas, engine){
-
+      scene.meshes.forEach((mesh) => mesh.isPickable = false)
       scene.hoverCursor = "default"
       this.teleportingCamera = new TeleportingCamera(scene, canvas, this)
       new Ground(scene, this.teleportingCamera)

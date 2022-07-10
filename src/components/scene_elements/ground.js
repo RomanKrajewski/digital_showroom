@@ -13,7 +13,7 @@ class Ground{
         // Our built-in 'ground' shape.
 
         const ground = scene.getMeshByName('Floor')
-
+        ground.isPickable = true
         const invisible_mat = new BABYLON.StandardMaterial("mat", scene);
         invisible_mat.alpha = 0;
         ground.material = invisible_mat;
