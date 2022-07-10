@@ -15,7 +15,8 @@ class TeleportingCamera {
         this.camera.minZ = 0.1
         // this.camera.fov = 1.3
         this.camera.fov = 1
-
+        this.cameraHeightAnimationRunning = false;
+        this.cameraTargetHeightAnimationRunning = false;
         // scene.gravity = new BABYLON.Vector3(0, 0.15, 0);
         // this.camera.applyGravity = true;
 
@@ -66,10 +67,10 @@ class TeleportingCamera {
     }
 
     animateToDefaultHeight(){
-        // this.animateTo(new BABYLON.Vector3(this.camera.position.x, CAMERA_DEFAULT_HEIGHT, this.camera.position.z))
-        if (this.camera.position.y > CAMERA_DEFAULT_HEIGHT - 0.001 && this.camera.position.y < CAMERA_DEFAULT_HEIGHT + 0.001){
+        if (this.cameraHeightAnimationRunning || this.camera.position.y > CAMERA_DEFAULT_HEIGHT - 0.1 && this.camera.position.y < CAMERA_DEFAULT_HEIGHT + 0.1){
             return
         }
+        console.log("animation firing")
         const animation = new BABYLON.Animation(
             "camera",
             "position.y",
@@ -102,33 +103,33 @@ class TeleportingCamera {
         this.camera.animations = []
         this.camera.animations.push(animation);
 
-
-        this.scene.beginAnimation(this.camera, 0, 75, false, 1);
+        this.cameraHeightAnimationRunning = true
+        this.scene.beginAnimation(this.camera, 0, 75, false, 1, () => this.cameraHeightAnimationRunning = false);
     }
 
     animateToDefaultTargetHeight(){
         // this.animateTo(new BABYLON.Vector3(this.camera.position.x, CAMERA_DEFAULT_HEIGHT, this.camera.position.z))
-        // if (this.camera.target.y > CAMERA_DEFAULT_HEIGHT - 0.001 && this.camera.target.y < CAMERA_DEFAULT_HEIGHT + 0.001){
-        //     return
-        // }
+        if (this.cameraTargetHeightAnimationRunning || this.camera.rotation.x > - 0.05 && this.camera.rotation.x < 0.05){
+            return
+        }
+        console.log(this.camera.rotation.x)
         const animation = new BABYLON.Animation(
             "camera",
-            "target.y",
+            "rotation.x",
             60,
             BABYLON.Animation.ANIMATIONTYPE_FLOAT,
             BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
         );
 
         const keys = [];
-
         keys.push({
             frame: 0,
-            value: this.camera.target.y
+            value: this.camera.rotation.x
         });
 
         keys.push({
-            frame: 75,
-            value: CAMERA_DEFAULT_HEIGHT,
+            frame: 45,
+            value: 0
         });
 
         animation.setKeys(keys);
@@ -142,9 +143,8 @@ class TeleportingCamera {
         animation.setEasingFunction(easingFunction);
         this.camera.animations = []
         this.camera.animations.push(animation);
-
-
-        this.scene.beginAnimation(this.camera, 0, 75, false, 1);
+        this.cameraTargetHeightAnimationRunning = true
+        this.scene.beginAnimation(this.camera, 0, 45, false, 1, () => this.cameraTargetHeightAnimationRunning = false);
     }
 
     animateTo(cameraPosition, cameraTarget = null) {
