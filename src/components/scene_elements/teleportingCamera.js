@@ -6,6 +6,7 @@ class TeleportingCamera {
     constructor(scene, canvas) {
 
         this.scene = scene;
+        this.canvas = canvas;
         this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, CAMERA_DEFAULT_HEIGHT, 0),this.scene);
 
         this.camera.attachControl(canvas, true);
@@ -118,7 +119,12 @@ class TeleportingCamera {
 
     targetArtwork(artworkDetails){
         const half_h = artworkDetails.height*SCALING_FACTOR/200;
-        const l = half_h/Math.atan(this.camera.fov/2);
+        const half_w = artworkDetails.width*SCALING_FACTOR/200;
+        const canvasRatio = this.canvas.width/this.canvas.height;
+        console.log(this.canvas.width)
+        const l_height = half_h/Math.atan(this.camera.fov/2);
+        const l_width = half_w/Math.atan(this.camera.fov*canvasRatio/2)
+        const l = Math.max(l_width, l_height)
         const cameraPositioningVector = new BABYLON.Vector3(0,0,-l)
         // const yprQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.z)
         const yprQuaternion = new BABYLON.Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
