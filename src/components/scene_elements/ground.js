@@ -14,6 +14,7 @@ class Ground{
 
         const ground = scene.getMeshByName('Floor')
         ground.isPickable = true
+        ground.checkCollisions = true
         const invisible_mat = new BABYLON.StandardMaterial("mat", scene);
         invisible_mat.alpha = 0;
         ground.material = invisible_mat;
@@ -36,8 +37,7 @@ class Ground{
                 }
             }
 
-            if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERTAP && pointerInfo.pickInfo.pickedMesh.id === ground.id){
-                    console.log("teleporting")
+            if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERTAP && pointerInfo.pickInfo.pickedMesh && pointerInfo.pickInfo.pickedMesh.id === ground.id){
                     teleporting_camera.teleport(pointerInfo);
             }
         })

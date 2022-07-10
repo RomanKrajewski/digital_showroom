@@ -2,6 +2,7 @@ import * as BABYLON from "babylonjs";
 
 import {SCALING_FACTOR} from "@/constants";
 import {FreeCameraKeyboardRotateInput} from "@/components/scene_elements/FreeCameraRotateInput";
+import {ROOM_MESH_NAME} from "@/components/scene_elements/walls";
 const CAMERA_DEFAULT_HEIGHT = 1.20 * SCALING_FACTOR
 class TeleportingCamera {
     constructor(scene, canvas, canvasComponent) {
@@ -25,9 +26,7 @@ class TeleportingCamera {
         this.camera.ellipsoid = new BABYLON.Vector3(0.5, CAMERA_DEFAULT_HEIGHT/2, 0.5);
         scene.collisionsEnabled = true;
         this.camera.checkCollisions = true;
-        scene.meshes.filter(mesh => mesh.name.includes("Wand") || mesh.name.includes("Raum")).forEach(mesh => {
-            mesh.checkCollisions = true
-        })
+        scene.getMeshByName(ROOM_MESH_NAME).checkCollisions = true
         this.camera.speed = 0.1
         this.camera.inputs.remove(this.camera.inputs.attached.keyboard)
         this.camera.inputs.add(new FreeCameraKeyboardRotateInput(this, canvasComponent))

@@ -3,6 +3,7 @@ import {SCALING_FACTOR} from "@/constants";
 import {getRotationBetweenVectors} from "@/utils";
 import axios from "axios";
 import ArtworkInfo from "../ArtworkInfo";
+export const ROOM_MESH_NAME = 'Raum_primitive0'
 class Walls{
     positioningIndicator
     currentArtwork = null
@@ -19,6 +20,8 @@ class Walls{
             depth: 0.1
         }, scene);
         this.positioningIndicator.setEnabled(false);
+
+        this.scene.getMeshByName(ROOM_MESH_NAME).isPickable = true
 //kommentar
         const positioningIndicator_material = new BABYLON.StandardMaterial("positioningIndicator_material", scene)
         positioningIndicator_material.alpha = 0.3
@@ -65,14 +68,13 @@ class Walls{
                             this.currentArtwork = null
                             this.positioningIndicator.dispose()
                             this.parentComponent.artworkPositioned()
-                            scene.getMeshByName("Raum_primitive0").isPickable = false
                         }
                     )
                 }
             }
         })
 
-        let mesh = scene.getMeshByName("Raum_primitive0")
+        let mesh = scene.getMeshByName(ROOM_MESH_NAME)
         mesh.actionManager = new BABYLON.ActionManager(scene)
 
         mesh.actionManager.registerAction(
@@ -145,7 +147,6 @@ class Walls{
     }
 
     positionArtwork = (artworkToPosition) =>  {
-        this.scene.getMeshByName("Raum_primitive0").isPickable = true
         this.positioningIndicator.dispose()
         this.currentArtwork = artworkToPosition
         this.positioningIndicator = this.createArtworkMesh(artworkToPosition)
