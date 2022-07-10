@@ -63,7 +63,8 @@ export class FreeCameraKeyboardRotateInput{
     };
 
     onKeyDown = function (evt) {
-        this.teleportingCamera.animateToDefaultHeight()
+        // this.teleportingCamera.animateToDefaultHeight()
+        // this.teleportingCamera.animateToDefaultTargetHeight()
         this.canvasComponent.artworkFocused(null)
         if (this.keysAll.indexOf(evt.keyCode) !== -1) {
             const index = this.keys.indexOf(evt.keyCode);

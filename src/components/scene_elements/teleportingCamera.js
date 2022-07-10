@@ -9,7 +9,7 @@ class TeleportingCamera {
 
         this.scene = scene;
         this.canvas = canvas;
-        this.camera = new BABYLON.UniversalCamera("camera", new BABYLON.Vector3(0, CAMERA_DEFAULT_HEIGHT, 0),this.scene);
+        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, CAMERA_DEFAULT_HEIGHT, 0),this.scene);
 
         this.camera.attachControl(canvas, true);
         this.camera.minZ = 0.1
@@ -30,6 +30,10 @@ class TeleportingCamera {
         this.camera.speed = 0.1
         this.camera.inputs.remove(this.camera.inputs.attached.keyboard)
         this.camera.inputs.add(new FreeCameraKeyboardRotateInput(this, canvasComponent))
+        if(FreeCameraKeyboardRotateInput === canvasComponent){
+            return true
+        }
+
     }
     
     teleport(pointerInfo){
@@ -79,6 +83,47 @@ class TeleportingCamera {
         keys.push({
             frame: 0,
             value: this.camera.position.y
+        });
+
+        keys.push({
+            frame: 75,
+            value: CAMERA_DEFAULT_HEIGHT,
+        });
+
+        animation.setKeys(keys);
+        // Creating an easing function
+        let easingFunction = new BABYLON.QuadraticEase();
+
+        // For each easing function, you can choose between EASEIN (default), EASEOUT, EASEINOUT
+        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+
+        // Adding the easing function to the animation
+        animation.setEasingFunction(easingFunction);
+        this.camera.animations = []
+        this.camera.animations.push(animation);
+
+
+        this.scene.beginAnimation(this.camera, 0, 75, false, 1);
+    }
+
+    animateToDefaultTargetHeight(){
+        // this.animateTo(new BABYLON.Vector3(this.camera.position.x, CAMERA_DEFAULT_HEIGHT, this.camera.position.z))
+        // if (this.camera.target.y > CAMERA_DEFAULT_HEIGHT - 0.001 && this.camera.target.y < CAMERA_DEFAULT_HEIGHT + 0.001){
+        //     return
+        // }
+        const animation = new BABYLON.Animation(
+            "camera",
+            "target.y",
+            60,
+            BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+            BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+        );
+
+        const keys = [];
+
+        keys.push({
+            frame: 0,
+            value: this.camera.target.y
         });
 
         keys.push({
