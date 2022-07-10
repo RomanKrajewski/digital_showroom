@@ -1,18 +1,36 @@
 import * as BABYLON from "babylonjs";
 
 import {SCALING_FACTOR} from "@/constants";
+import {FreeCameraKeyboardRotateInput} from "@/components/scene_elements/FreeCameraRotateInput";
 const CAMERA_DEFAULT_HEIGHT = 1.20 * SCALING_FACTOR
 class TeleportingCamera {
-    constructor(scene, canvas) {
+    constructor(scene, canvas, canvasComponent) {
 
         this.scene = scene;
         this.canvas = canvas;
-        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, CAMERA_DEFAULT_HEIGHT, 0),this.scene);
+        this.camera = new BABYLON.UniversalCamera("camera", new BABYLON.Vector3(0, CAMERA_DEFAULT_HEIGHT, 0),this.scene);
 
         this.camera.attachControl(canvas, true);
         this.camera.minZ = 0.1
         // this.camera.fov = 1.3
         this.camera.fov = 1
+
+        // scene.gravity = new BABYLON.Vector3(0, 0.15, 0);
+        // this.camera.applyGravity = true;
+
+        // const assumedFramesPerSecond = 60;
+        // const earthGravity = -9.81;
+        // scene.gravity = new BABYLON.Vector3(0, earthGravity / assumedFramesPerSecond, 0);
+        //radius of the ellipsoid has to be half camera hight
+        this.camera.ellipsoid = new BABYLON.Vector3(0.5, CAMERA_DEFAULT_HEIGHT/2, 0.5);
+        scene.collisionsEnabled = true;
+        this.camera.checkCollisions = true;
+        scene.meshes.filter(mesh => mesh.name.includes("Wand") || mesh.name.includes("Raum")).forEach(mesh => {
+            mesh.checkCollisions = true
+        })
+        this.camera.speed = 0.1
+        this.camera.inputs.remove(this.camera.inputs.attached.keyboard)
+        this.camera.inputs.add(new FreeCameraKeyboardRotateInput(this, canvasComponent))
     }
     
     teleport(pointerInfo){
@@ -45,7 +63,44 @@ class TeleportingCamera {
     }
 
     animateToDefaultHeight(){
-        this.animateTo(new BABYLON.Vector3(this.camera.position.x, CAMERA_DEFAULT_HEIGHT, this.camera.position.z))
+        // this.animateTo(new BABYLON.Vector3(this.camera.position.x, CAMERA_DEFAULT_HEIGHT, this.camera.position.z))
+        if (this.camera.position.y > CAMERA_DEFAULT_HEIGHT - 0.001 && this.camera.position.y < CAMERA_DEFAULT_HEIGHT + 0.001){
+            return
+        }
+        const animation = new BABYLON.Animation(
+            "camera",
+            "position.y",
+            60,
+            BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+            BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+        );
+
+        const keys = [];
+
+        keys.push({
+            frame: 0,
+            value: this.camera.position.y
+        });
+
+        keys.push({
+            frame: 75,
+            value: CAMERA_DEFAULT_HEIGHT,
+        });
+
+        animation.setKeys(keys);
+        // Creating an easing function
+        let easingFunction = new BABYLON.QuadraticEase();
+
+        // For each easing function, you can choose between EASEIN (default), EASEOUT, EASEINOUT
+        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+
+        // Adding the easing function to the animation
+        animation.setEasingFunction(easingFunction);
+        this.camera.animations = []
+        this.camera.animations.push(animation);
+
+
+        this.scene.beginAnimation(this.camera, 0, 75, false, 1);
     }
 
     animateTo(cameraPosition, cameraTarget = null) {
@@ -121,7 +176,6 @@ class TeleportingCamera {
         const half_h = artworkDetails.height*SCALING_FACTOR/200;
         const half_w = artworkDetails.width*SCALING_FACTOR/200;
         const canvasRatio = this.canvas.width/this.canvas.height;
-        console.log(this.canvas.width)
         const l_height = half_h/Math.atan(this.camera.fov/2);
         const l_width = half_w/Math.atan(this.camera.fov*canvasRatio/2)
         const l = Math.max(l_width, l_height)

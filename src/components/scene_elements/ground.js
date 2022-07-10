@@ -35,10 +35,9 @@ class Ground{
                     move_indicator.position = pointerInfo.pickInfo.pickedPoint;
                 }
             }
-            if (1 === teleporting_camera){
-                teleporting_camera.teleport(null)
-            }
+
             if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERTAP && pointerInfo.pickInfo.pickedMesh.id === ground.id){
+                    console.log("teleporting")
                     teleporting_camera.teleport(pointerInfo);
             }
         })
