@@ -35,19 +35,21 @@
       </v-container>
     </v-container>
     <v-card-actions>
-      <v-row class="pa-1">
-        <v-btn v-if="!userStore.isLoggedIn" class="ma-1" small color="primary" :href="contactLink">Kontakt</v-btn>
-        <div v-if="userStore.isLoggedIn && !deleting">
-          <v-btn v-if="!editing" class="ma-1" small color="primary" @click="$emit('positioning' , artwork)">Positionieren</v-btn>
-          <v-btn v-if="!editing" class="ma-1" small color="primary" @click="editing = true">Bearbeiten</v-btn>
-          <v-btn v-if="editing" class="ma-1" small color="primary" @click="saveArtwork">Speichern</v-btn>
-          <v-btn v-if="!deleting && !editing" class="ma-1" small color="primary" @click="deleting = true">Löschen</v-btn>
-        </div>
-        <div v-if="deleting">
-          <p class = "ma-1">Löschen?</p>
-          <v-btn class="ma-1" small color="red" @click="deleteArtwork">Ja</v-btn>
-          <v-btn class="ma-1" small color="grey" @click="deleting = false">Nein</v-btn>
-        </div>
+      <v-row v-if="!userStore.isLoggedIn" class="pa-1">
+        <v-btn  class="ma-1" small color="primary" :href="contactLink">Kontakt</v-btn>
+      </v-row>
+        <v-row v-if="userStore.isLoggedIn && !deleting && !editing" class="pa-1">
+          <v-btn class="ma-1" small color="primary" @click="$emit('positioning' , artwork)">Positionieren</v-btn>
+          <v-btn class="ma-1" small color="primary" @click="editing = true">Bearbeiten</v-btn>
+          <v-btn class="ma-1" small color="primary" @click="deleting = true">Löschen</v-btn>
+        </v-row>
+      <v-row v-if="editing" class="pa-1">
+          <v-btn class="ma-1" small color="primary" @click="saveArtwork">Speichern</v-btn>
+      </v-row>
+      <v-row v-if="deleting" class="pa-1">
+        <p class = "ma-2">Löschen?</p>
+        <v-btn class="ma-1" small color="red" @click="deleteArtwork">Ja</v-btn>
+        <v-btn class="ma-1" small color="grey" @click="deleting = false">Nein</v-btn>
       </v-row>
     </v-card-actions>
   </v-card>
