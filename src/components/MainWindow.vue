@@ -15,8 +15,8 @@
             <artwork-list @artwork-updated="updateArtwork" @positioning="initPositioningArtwork" v-if="show_navigation"></artwork-list>
             <login-form v-if="show_login"></login-form>
           </v-col>
-          <artwork-hover-info cols="12" sm="6" md="4" xl="2" v-if="showHoverInfo &! focusedArtwork" :artwork="hoveringArtwork" ></artwork-hover-info>
-          <artwork-focus-info cols="12" sm="6" md="4" xl="2" v-if="showFocusInfo" :artwork="focusedArtwork"></artwork-focus-info>
+          <artwork-hover-info cols="12" sm="6" md="4" xl="2" v-if="hoveringArtwork && !focusedArtwork " :artwork="hoveringArtwork" ></artwork-hover-info>
+          <artwork-focus-info cols="12" sm="6" md="4" xl="2" v-if="focusedArtwork" :artwork="focusedArtwork"></artwork-focus-info>
         </v-row>
       </v-container>
   </div>
@@ -42,11 +42,7 @@ export default {
   props:['show_navigation', 'show_login'],
   data: function (){
     return {
-      positioningArtwork: {prop: true },
-      updatingArtwork:{prop:true},
-      showHoverInfo: false,
       hoveringArtwork: null,
-      showFocusInfo: false,
       focusedArtwork: null,
       scene: null,
       walls: null,
@@ -99,12 +95,12 @@ export default {
         }
         if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERMOVE && this.pointerDown) {
           this.teleportingCamera.animateToDefaultHeight()
-          this.artworkFocused(null)
+          this.focusedArtwork = null
         }
       })
 
       scene.getEngine().getInputElement().addEventListener("keydown", (evt) => {
-            if (MOVEMENT_KEYS.indexOf(evt.keyCode) !== -1) this.artworkFocused(null)
+            if (MOVEMENT_KEYS.indexOf(evt.keyCode) !== -1) this.focusedArtwork = null
           }
       )
     },
@@ -114,28 +110,8 @@ export default {
         this.walls.positionArtwork(artwork)
       }
     },
-    artworkPositioned: function (){
-      this.initPositioningArtwork(null)
-    },
     updateArtwork: function(artwork){
       this.walls.updateArtwork(artwork)
-    },
-    artworkHoverEnter: function(artwork){
-      if (artwork) {
-        this.showHoverInfo = true
-        this.hoveringArtwork = artwork
-      } else{
-        this.showHoverInfo = false
-      }
-    },
-    artworkFocused: function(artwork){
-      if(artwork){
-        this.showFocusInfo = true
-        this.focusedArtwork = artwork
-      }else{
-        this.showFocusInfo = false
-        this.focusedArtwork = null
-      }
     },
     cameraTargetArtwork: function(artwork){
       this.teleportingCamera.targetArtwork(artwork)

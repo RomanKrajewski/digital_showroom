@@ -67,7 +67,7 @@ class Walls{
                             this.updateArtwork(this.currentArtwork)
                             this.currentArtwork = null
                             this.positioningIndicator.dispose()
-                            this.parentComponent.artworkPositioned()
+                            this.parentComponent.initPositioningArtwork(null)
                         }
                     )
                 }
@@ -121,20 +121,20 @@ class Walls{
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
                     () => {
                     this.scene.hoverCursor = 'pointer'
-                    this.parentComponent.artworkHoverEnter(artworkDetails);
+                    this.parentComponent.hoveringArtwork = artworkDetails;
                     }))
             artworkMesh.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOutTrigger},
                     () => {
                         this.scene.hoverCursor = 'default'
-                        this.parentComponent.artworkHoverEnter(null);
+                        this.parentComponent.hoveringArtwork = null;
                     })
             )
             artworkMesh.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPickTrigger},
                     () => {
                         this.parentComponent.cameraTargetArtwork(artworkDetails)
-                        this.parentComponent.artworkFocused(artworkDetails)
+                        this.parentComponent.focusedArtwork = artworkDetails
                     })
             )
             artworkMeshes.push({mesh: artworkMesh, artwork: artworkDetails} )
