@@ -4,6 +4,7 @@ import {SCALING_FACTOR} from "@/constants";
 import {FreeCameraKeyboardRotateInput} from "@/components/scene_elements/FreeCameraRotateInput";
 import {ROOM_MESH_NAME} from "@/components/scene_elements/walls";
 const CAMERA_DEFAULT_HEIGHT = 1.20 * SCALING_FACTOR
+const FOV = 0.8 //horizontal fov in radians
 class TeleportingCamera {
     constructor(scene, canvas, canvasComponent) {
 
@@ -13,27 +14,20 @@ class TeleportingCamera {
 
         this.camera.attachControl(canvas, true);
         this.camera.minZ = 0.1
-        // this.camera.fov = 1.3
-        this.camera.fov = 1
+        this.camera.fov = FOV
+
         this.cameraHeightAnimationRunning = false;
         this.cameraTargetHeightAnimationRunning = false;
-        // scene.gravity = new BABYLON.Vector3(0, 0.15, 0);
-        // this.camera.applyGravity = true;
 
-        // const assumedFramesPerSecond = 60;
-        // const earthGravity = -9.81;
-        // scene.gravity = new BABYLON.Vector3(0, earthGravity / assumedFramesPerSecond, 0);
-        //radius of the ellipsoid has to be half camera hight
         this.camera.ellipsoid = new BABYLON.Vector3(0.5, CAMERA_DEFAULT_HEIGHT/2, 0.5);
         scene.collisionsEnabled = true;
         this.camera.checkCollisions = true;
         scene.getMeshByName(ROOM_MESH_NAME).checkCollisions = true
-        this.camera.speed = 0.1
+
         this.camera.inputs.remove(this.camera.inputs.attached.keyboard)
+
+        // noinspection JSCheckFunctionSignatures
         this.camera.inputs.add(new FreeCameraKeyboardRotateInput(this, canvasComponent))
-        if(FreeCameraKeyboardRotateInput === canvasComponent){
-            return true
-        }
 
     }
     
@@ -70,7 +64,9 @@ class TeleportingCamera {
         if (this.cameraHeightAnimationRunning || this.camera.position.y > CAMERA_DEFAULT_HEIGHT - 0.1 && this.camera.position.y < CAMERA_DEFAULT_HEIGHT + 0.1){
             return
         }
-        console.log("animation firing")
+
+        this.camera.animations = []
+
         const animation = new BABYLON.Animation(
             "camera",
             "position.y",
@@ -81,26 +77,12 @@ class TeleportingCamera {
 
         const keys = [];
 
-        keys.push({
-            frame: 0,
-            value: this.camera.position.y
-        });
-
-        keys.push({
-            frame: 75,
-            value: CAMERA_DEFAULT_HEIGHT,
-        });
-
+        keys.push({frame: 0, value: this.camera.position.y });
+        keys.push({frame: 75, value: CAMERA_DEFAULT_HEIGHT});
         animation.setKeys(keys);
-        // Creating an easing function
-        let easingFunction = new BABYLON.QuadraticEase();
 
-        // For each easing function, you can choose between EASEIN (default), EASEOUT, EASEINOUT
-        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+        animation.setEasingFunction(this.getQuadraticEaseOut());
 
-        // Adding the easing function to the animation
-        animation.setEasingFunction(easingFunction);
-        this.camera.animations = []
         this.camera.animations.push(animation);
 
         this.cameraHeightAnimationRunning = true
@@ -108,11 +90,11 @@ class TeleportingCamera {
     }
 
     animateToDefaultTargetHeight(){
-        // this.animateTo(new BABYLON.Vector3(this.camera.position.x, CAMERA_DEFAULT_HEIGHT, this.camera.position.z))
         if (this.cameraTargetHeightAnimationRunning || this.camera.rotation.x > - 0.05 && this.camera.rotation.x < 0.05){
             return
         }
-        console.log(this.camera.rotation.x)
+
+        this.camera.animations = []
         const animation = new BABYLON.Animation(
             "camera",
             "rotation.x",
@@ -122,32 +104,20 @@ class TeleportingCamera {
         );
 
         const keys = [];
-        keys.push({
-            frame: 0,
-            value: this.camera.rotation.x
-        });
-
-        keys.push({
-            frame: 45,
-            value: 0
-        });
-
+        keys.push({frame: 0, value: this.camera.rotation.x});
+        keys.push({frame: 45, value: 0});
         animation.setKeys(keys);
-        // Creating an easing function
-        let easingFunction = new BABYLON.QuadraticEase();
 
-        // For each easing function, you can choose between EASEIN (default), EASEOUT, EASEINOUT
-        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+        animation.setEasingFunction(this.getQuadraticEaseOut());
 
-        // Adding the easing function to the animation
-        animation.setEasingFunction(easingFunction);
-        this.camera.animations = []
         this.camera.animations.push(animation);
         this.cameraTargetHeightAnimationRunning = true
         this.scene.beginAnimation(this.camera, 0, 45, false, 1, () => this.cameraTargetHeightAnimationRunning = false);
     }
 
     animateTo(cameraPosition, cameraTarget = null) {
+        this.camera.animations = [];
+
         const positionAnimation = new BABYLON.Animation(
             "camera",
             "position",
@@ -157,27 +127,12 @@ class TeleportingCamera {
         );
 
         const keys = [];
-
-        keys.push({
-            frame: 0,
-            value: this.camera.position.clone()
-        });
-
-        keys.push({
-            frame: 75,
-            value: cameraPosition,
-        });
-
+        keys.push({frame: 0, value: this.camera.position.clone()});
+        keys.push({frame: 75, value: cameraPosition});
         positionAnimation.setKeys(keys);
-        this.camera.animations = [];
-// Creating an easing function
-        let easingFunction = new BABYLON.QuadraticEase();
 
-// For each easing function, you can choose between EASEIN (default), EASEOUT, EASEINOUT
-        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+        positionAnimation.setEasingFunction(this.getQuadraticEaseOut());
 
-// Adding the easing function to the animation
-        positionAnimation.setEasingFunction(easingFunction);
         this.camera.animations.push(positionAnimation);
 
         if(cameraTarget){
@@ -190,32 +145,23 @@ class TeleportingCamera {
             );
 
             const keys = [];
-
-            keys.push({
-                frame: 0,
-                value: this.camera.target.clone()
-            });
-
-            keys.push({
-                frame: 75,
-                value: cameraTarget,
-            });
-
+            keys.push({frame: 0, value: this.camera.target.clone()});
+            keys.push({frame: 75, value: cameraTarget,});
             targetAnimation.setKeys(keys);
-            // Creating an easing function
-            let easingFunction = new BABYLON.QuadraticEase();
 
-            // For each easing function, you can choose between EASEIN (default), EASEOUT, EASEINOUT
-            easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+            targetAnimation.setEasingFunction(this.getQuadraticEaseOut());
 
-            // Adding the easing function to the animation
-            targetAnimation.setEasingFunction(easingFunction);
             this.camera.animations.push(targetAnimation);
         }
 
         this.scene.beginAnimation(this.camera, 0, 75, false, 1);
     }
 
+    getQuadraticEaseOut(){
+        let easingFunction = new BABYLON.QuadraticEase();
+        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+        return easingFunction
+    }
     targetArtwork(artworkDetails){
         const half_h = artworkDetails.height*SCALING_FACTOR/200;
         const half_w = artworkDetails.width*SCALING_FACTOR/200;
@@ -224,7 +170,7 @@ class TeleportingCamera {
         const l_width = half_w/Math.atan(this.camera.fov*canvasRatio/2)
         const l = Math.max(l_width, l_height)
         const cameraPositioningVector = new BABYLON.Vector3(0,0,-l)
-        // const yprQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.z)
+
         const yprQuaternion = new BABYLON.Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
         const rotationMatrix = new BABYLON.Matrix();
         yprQuaternion.toRotationMatrix(rotationMatrix);

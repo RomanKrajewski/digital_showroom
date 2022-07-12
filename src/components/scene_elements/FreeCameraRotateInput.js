@@ -1,7 +1,8 @@
 import * as BABYLON from "babylonjs";
-
+const MOVEMENT_SPEED = 6/10000
+const ROTATION_SPEED = 3/1000
 export class FreeCameraKeyboardRotateInput{
-    constructor(camera, canvasComponent) {
+    constructor(teleportingCamera, canvasComponent) {
         this.keys = []
         this.keysLeft = [37, 65]
         this.keysRight= [39, 68]
@@ -9,8 +10,8 @@ export class FreeCameraKeyboardRotateInput{
         this.keysDown=[40, 83]
         this.keysAll=[]
         this.keysAll = this.keysAll.concat(this.keysUp, this.keysDown, this.keysLeft, this.keysRight)
-        this.sensibility = 0.04
-        this.teleportingCamera = camera
+        this.teleportingCamera = teleportingCamera
+        this.engine = teleportingCamera.camera.getEngine()
         this.canvasComponent = canvasComponent
     }
     getSimpleName = function(){
@@ -18,11 +19,9 @@ export class FreeCameraKeyboardRotateInput{
     }
     attachControl = function (noPreventDefault) {
         this.noPreventDefault = noPreventDefault
-        const engine = this.teleportingCamera.camera.getEngine();
-        const element = engine.getInputElement();
+        const element = this.engine.getInputElement();
         element.addEventListener("keydown", this.onKeyDown.bind(this), false);
         element.addEventListener("keyup", this.onKeyUp.bind(this), false);
-            // BABYLON.Tools.RegisterTopRootEvents(canvas, [{ name: "blur", handler: this._onLostFocus }]);
     };
 
     checkInputs = function () {
@@ -32,19 +31,17 @@ export class FreeCameraKeyboardRotateInput{
         for (let index = 0; index < this.keys.length; index++) {
             const keyCode = this.keys[index];
             if (this.keysLeft.indexOf(keyCode) !== -1) {
-                // console.log("rotating left")
-                camera.rotation.y -= this.sensibility;
+                camera.rotation.y -= ROTATION_SPEED * this.engine.getDeltaTime();
             } else if (this.keysRight.indexOf(keyCode) !== -1) {
-                // console.log("rotating right")
-                camera.rotation.y += this.sensibility;
+                camera.rotation.y += ROTATION_SPEED * this.engine.getDeltaTime();
             } else if (this.keysUp.indexOf(keyCode) !== -1){
                 const forward = camera.getDirection(BABYLON.Vector3.Forward())
                 forward.y = 0
-                camera.cameraDirection.addInPlace(forward.scale(this.sensibility/3));
+                camera.cameraDirection.addInPlace(forward.scale(MOVEMENT_SPEED * this.engine.getDeltaTime()));
             } else if (this.keysDown.indexOf(keyCode) !== -1){
                 const backward = camera.getDirection(BABYLON.Vector3.Backward())
                 backward.y = 0
-                camera.cameraDirection.addInPlace(backward.scale(this.sensibility/3));
+                camera.cameraDirection.addInPlace(backward.scale(MOVEMENT_SPEED * this.engine.getDeltaTime()));
             }
         }
 
