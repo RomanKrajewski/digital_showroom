@@ -1,18 +1,18 @@
 import * as BABYLON from "babylonjs";
 
 import {SCALING_FACTOR} from "@/constants";
-import {FreeCameraKeyboardRotateInput} from "@/components/scene_elements/FreeCameraRotateInput";
+import {FreeCameraKeyboardRotateInput, MOVEMENT_KEYS} from "@/components/scene_elements/FreeCameraRotateInput";
 import {ROOM_MESH_NAME} from "@/components/scene_elements/walls";
 const CAMERA_DEFAULT_HEIGHT = 1.20 * SCALING_FACTOR
 const FOV = 0.8 //horizontal fov in radians
 class TeleportingCamera {
-    constructor(scene, canvas, canvasComponent) {
+    constructor(scene, canvasComponent) {
 
         this.scene = scene;
-        this.canvas = canvas;
+        this.canvas = scene.getEngine().getRenderingCanvas();
         this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, CAMERA_DEFAULT_HEIGHT, 0),this.scene);
 
-        this.camera.attachControl(canvas, true);
+        this.camera.attachControl(this.canvas, true);
         this.camera.minZ = 0.1
         this.camera.fov = FOV
 
@@ -25,10 +25,17 @@ class TeleportingCamera {
         scene.getMeshByName(ROOM_MESH_NAME).checkCollisions = true
 
         this.camera.inputs.remove(this.camera.inputs.attached.keyboard)
-
+        this.keyboardRotateInput = new FreeCameraKeyboardRotateInput(this, canvasComponent)
         // noinspection JSCheckFunctionSignatures
-        this.camera.inputs.add(new FreeCameraKeyboardRotateInput(this, canvasComponent))
+        this.camera.inputs.add(this.keyboardRotateInput)
+        this.camera.getEngine().getInputElement().addEventListener("keydown", (evt) => this.resetCameraOnMovement(evt))
+    }
 
+    resetCameraOnMovement(evt){
+        if (MOVEMENT_KEYS.indexOf(evt.keyCode) !== -1) {
+            this.animateToDefaultTargetHeight()
+            this.animateToDefaultHeight()
+        }
     }
     
     teleport(pointerInfo){

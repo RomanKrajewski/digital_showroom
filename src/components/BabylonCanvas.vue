@@ -43,30 +43,30 @@ export default {
     resize: function (){
       this.engine.resize()
     },
-    load_scene: function(engine, canvas) {
+    load_scene: function(engine) {
       const vm = this
       // This creates a basic Babylon Scene object (non-mesh)
       BABYLON.SceneLoader.Load(`${process.env.VUE_APP_BACKEND_URL}/static/`, 'model.glb', engine,
       function(scene){
         vm.debug_message = 'success'
         try{
-          vm.scene = vm.setup_scene(scene, canvas, engine)
+          vm.scene = vm.setup_scene(scene)
         }
         catch (e){
           console.log(e)
         }
       })
     },
-    setup_scene: function(scene, canvas, engine){
+    setup_scene: function(scene){
       scene.meshes.forEach((mesh) => mesh.isPickable = false)
       scene.hoverCursor = "default"
-      this.teleportingCamera = new TeleportingCamera(scene, canvas, this)
+
+      this.teleportingCamera = new TeleportingCamera(scene, this)
       new Ground(scene, this.teleportingCamera)
       this.walls = new Walls(scene, this)
       this.walls.loadArtworks()
-      // scene.environmentTexture = new BABYLON.HDRCubeTexture(`${process.env.VUE_APP_BACKEND_URL}/static/quarry.hdr`, scene, 128, false, true, false, true);
 
-      engine.runRenderLoop(function (){
+      scene.getEngine().runRenderLoop(function (){
         scene.render();
       });
 
@@ -107,7 +107,7 @@ export default {
     window.addEventListener('resize', this.resize);
 
     this.engine =  new BABYLON.Engine(this.$refs.canvas, true);
-    this.load_scene(this.engine, this.$refs.canvas);
+    this.load_scene(this.engine);
 
 
   }
