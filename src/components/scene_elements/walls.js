@@ -114,7 +114,7 @@ class Walls{
             const artworkMesh = this.createArtworkMesh(artworkDetails)
 
             artworkMesh.position = new BABYLON.Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
-            // artworkMesh.rotation = new BABYLON.Vector3(artworkDetails.orientation_vector.x, artworkDetails.orientation_vector.y, artworkDetails.orientation_vector.z)
+
             artworkMesh.rotationQuaternion = new BABYLON.Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
             artworkMesh.actionManager = new BABYLON.ActionManager(this.scene)
             artworkMesh.actionManager.registerAction(
