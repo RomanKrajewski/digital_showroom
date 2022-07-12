@@ -22,7 +22,7 @@ class Walls{
         this.positioningIndicator.setEnabled(false);
 
         this.scene.getMeshByName(ROOM_MESH_NAME).isPickable = true
-//kommentar
+
         const positioningIndicator_material = new BABYLON.StandardMaterial("positioningIndicator_material", scene)
         positioningIndicator_material.alpha = 0.3
         positioningIndicator_material.material = positioningIndicator_material

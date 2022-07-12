@@ -6,7 +6,7 @@ import {ROOM_MESH_NAME} from "@/components/scene_elements/walls";
 const CAMERA_DEFAULT_HEIGHT = 1.20 * SCALING_FACTOR
 const FOV = 0.8 //horizontal fov in radians
 class TeleportingCamera {
-    constructor(scene, canvasComponent) {
+    constructor(scene) {
 
         this.scene = scene;
         this.canvas = scene.getEngine().getRenderingCanvas();
@@ -25,7 +25,7 @@ class TeleportingCamera {
         scene.getMeshByName(ROOM_MESH_NAME).checkCollisions = true
 
         this.camera.inputs.remove(this.camera.inputs.attached.keyboard)
-        this.keyboardRotateInput = new FreeCameraKeyboardRotateInput(this, canvasComponent)
+        this.keyboardRotateInput = new FreeCameraKeyboardRotateInput(this)
         // noinspection JSCheckFunctionSignatures
         this.camera.inputs.add(this.keyboardRotateInput)
         this.camera.getEngine().getInputElement().addEventListener("keydown", (evt) => this.resetCameraOnMovement(evt))

@@ -9,12 +9,11 @@ const KEYS_DOWN =[40, 83]
 export const MOVEMENT_KEYS = Array.prototype.concat(KEYS_UP, KEYS_DOWN, KEYS_LEFT, KEYS_RIGHT)
 
 export class FreeCameraKeyboardRotateInput{
-    constructor(teleportingCamera, canvasComponent) {
+    constructor(teleportingCamera) {
         this.keys = []
 
         this.teleportingCamera = teleportingCamera
         this.engine = teleportingCamera.camera.getEngine()
-        this.canvasComponent = canvasComponent
     }
     getSimpleName = function(){
         return "keyboardRotate"
@@ -62,7 +61,6 @@ export class FreeCameraKeyboardRotateInput{
     };
 
     onKeyDown = function (evt) {
-        this.canvasComponent.artworkFocused(null)
         if (MOVEMENT_KEYS.indexOf(evt.keyCode) !== -1) {
             const index = this.keys.indexOf(evt.keyCode);
             if (index === -1) {

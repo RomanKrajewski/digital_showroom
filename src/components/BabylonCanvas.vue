@@ -14,13 +14,14 @@ import 'babylonjs-loaders';
 import {TeleportingCamera} from './scene_elements/teleportingCamera'
 import {Ground} from "./scene_elements/ground";
 import {Walls} from "./scene_elements/walls";
+import {MOVEMENT_KEYS} from "@/components/scene_elements/FreeCameraRotateInput";
 export default {
   name: "BabylonCanvas",
   props:['positioningArtwork', 'updatingArtwork'],
   data: function () {
     return {
-      engine: null,
       scene: null,
+      engine: null,
       walls: null,
       teleportingCamera: null,
       pointerDown: false,
@@ -39,29 +40,31 @@ export default {
     }
 
   },
+  mounted() {
+    window.addEventListener('resize', this.resize);
+    const engine = new BABYLON.Engine(this.$refs.canvas, true);
+    const vm = this
+    BABYLON.SceneLoader.Load(`${process.env.VUE_APP_BACKEND_URL}/static/`, 'model.glb', engine,
+        function(scene){
+          vm.debug_message = 'success'
+          try{
+            vm.scene = vm.setup_scene(scene)
+          }
+          catch (e){
+            console.log(e)
+          }
+        })
+  },
   methods: {
     resize: function (){
-      this.engine.resize()
+      this.scene.getEngine().resize()
     },
-    load_scene: function(engine) {
-      const vm = this
-      // This creates a basic Babylon Scene object (non-mesh)
-      BABYLON.SceneLoader.Load(`${process.env.VUE_APP_BACKEND_URL}/static/`, 'model.glb', engine,
-      function(scene){
-        vm.debug_message = 'success'
-        try{
-          vm.scene = vm.setup_scene(scene)
-        }
-        catch (e){
-          console.log(e)
-        }
-      })
-    },
+
     setup_scene: function(scene){
       scene.meshes.forEach((mesh) => mesh.isPickable = false)
       scene.hoverCursor = "default"
 
-      this.teleportingCamera = new TeleportingCamera(scene, this)
+      this.teleportingCamera = new TeleportingCamera(scene)
       new Ground(scene, this.teleportingCamera)
       this.walls = new Walls(scene, this)
       this.walls.loadArtworks()
@@ -69,23 +72,30 @@ export default {
       scene.getEngine().runRenderLoop(function (){
         scene.render();
       });
+      this.setupArtworkFocusEventListeners(scene);
 
-      scene.onPointerObservable.add((pointerInfo)=>{
-        if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERDOWN){
-          this.pointerDown = true
-        }
-        if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERUP){
-          this.pointerDown = false
-        }
-        if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERMOVE && this.pointerDown){
-          this.teleportingCamera.animateToDefaultHeight()
-          this.artworkFocused(null)
-        }
-      }
-      )
       scene.clearColor = new BABYLON.Color3(1, 1, 1);
 
       return scene;
+    },
+    setupArtworkFocusEventListeners: function (scene) {
+      scene.onPointerObservable.add((pointerInfo) => {
+        if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERDOWN) {
+          this.pointerDown = true
+        }
+        if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERUP) {
+          this.pointerDown = false
+        }
+        if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERMOVE && this.pointerDown) {
+          this.teleportingCamera.animateToDefaultHeight()
+          this.artworkFocused(null)
+        }
+      })
+
+      scene.getEngine().getInputElement().addEventListener("keydown", (evt) => {
+            if (MOVEMENT_KEYS.indexOf(evt.keyCode) !== -1) this.artworkFocused(null)
+          }
+      )
     },
     artworkPositioned: function() {
       this.$emit('artwork-positioned')
@@ -102,15 +112,8 @@ export default {
     positioningInitialized: function(){
       this.overlay = false
     }
-  },
-  mounted() {
-    window.addEventListener('resize', this.resize);
-
-    this.engine =  new BABYLON.Engine(this.$refs.canvas, true);
-    this.load_scene(this.engine);
-
-
   }
+
 }
 </script>
 
