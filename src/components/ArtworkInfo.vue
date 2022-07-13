@@ -22,8 +22,8 @@
       <v-card-subtitle v-if="!artwork.sold">Verfügbar</v-card-subtitle>
     </div>
     <v-container class="pa-1">
-      <v-img v-if="!editing" contain max-height="200" :src="artwork.image_url?artwork.image_url: 'https://imagesshowroom.s3.eu-central-1.amazonaws.com/placeholder.jpg'" ></v-img>
-      <v-container id="upload_container" v-if="editing" :style="`background-image: url(${artwork.image_url?artwork.image_url:'https://imagesshowroom.s3.eu-central-1.amazonaws.com/placeholder.jpg'})`">
+      <v-img v-if="!editing" contain max-height="200" :src="artwork.image_url?artwork.image_url: 'https://imagesshowroom.s3.amazonaws.com/placeholder.jpg'" ></v-img>
+      <v-container id="upload_container" v-if="editing" :style="`background-image: url(${artwork.image_url?artwork.image_url:'https://imagesshowroom.s3.amazonaws.com/placeholder.jpg'})`">
         <v-btn v-if="!uploading" color="success" @click="selectFile">
           Upload
         </v-btn>
