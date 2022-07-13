@@ -100,14 +100,18 @@ export default {
       }
    },
   methods: {
-    fetchArtworkInfo: async function(artwork){
-      const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${artwork.id}`)
-      artwork = response.data.artwork
+    parseArtwork: function (response) {
+      const artwork = response.data.artwork
       artwork.height = parseInt(artwork.height)
       artwork.width = parseInt(artwork.width)
-      if (!artwork.image_url){
+      if (!artwork.image_url) {
         artwork.image_url = ""
       }
+      return artwork;
+    },
+    fetchArtworkInfo: async function(artwork){
+      const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${artwork.id}`)
+      artwork = this.parseArtwork(response);
       return artwork
     },
     deleteArtwork: async function(){
@@ -118,10 +122,7 @@ export default {
     },
     saveArtwork: async function(){
       const response = await axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${this.artwork.id !== undefined ? this.artwork.id : ''}`, this.artwork)
-      const artwork = response.data.artwork
-      artwork.height = parseInt(artwork.height)
-      artwork.width = parseInt(artwork.width)
-      this.artwork = artwork
+      this.artwork = this.parseArtwork(response)
       this.editing = false
       this.$emit('artwork-updated', this.artwork)
     },
@@ -133,18 +134,6 @@ export default {
     selectFile: async function(){
       let fileInputElement = this.$refs.file;
       await fileInputElement.click();
-    },
-
-    uploadFile: async function(){
-      let fileInputElement = this.$refs.file
-      let file = fileInputElement.files[0]
-      this.uploading = true
-      const response = await axios.post(`${process.env.VUE_APP_BACKEND_URL}/api/image/`, file, {headers: {
-        'Content-Type': file.type
-      }})
-      const image_id = response.data.image.id
-      this.artwork.image_id = image_id
-      this.uploading = false
     },
     uploadFileAWS: async function(){
       let fileInputElement = this.$refs.file
