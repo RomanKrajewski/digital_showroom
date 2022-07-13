@@ -4,7 +4,7 @@
         <v-row>
           <v-col cols="12" class="ma-0 pa-0">
            <div>
-              <v-overlay :model-value="overlay" contained class="align-center justify-center">
+              <v-overlay :model-value="loading" contained class="align-center justify-center">
                 <h1>Lade...</h1>
               </v-overlay>
               <canvas class="ma-0" ref = 'canvas' ></canvas>
@@ -48,11 +48,11 @@ export default {
       walls: null,
       teleportingCamera: null,
       pointerDown: false,
-      overlay: false,
+      loading: false,
     }
   },
   mounted() {
-    this.overlay = true
+    this.loading = true
     window.addEventListener('resize', this.resize);
     const engine = new BABYLON.Engine(this.$refs.canvas, true);
     const vm = this
@@ -62,7 +62,7 @@ export default {
           vm.debug_message = 'success'
           try{
             vm.scene = vm.setup_scene(scene)
-            vm.overlay = false
+            vm.loading = false
           }
           catch (e){
             console.log(e)
@@ -109,7 +109,7 @@ export default {
     },
     initPositioningArtwork: function (artwork){
       if (artwork){
-        this.overlay=true
+        this.loading=true
         this.walls.positionArtwork(artwork)
       }
     },
@@ -118,9 +118,6 @@ export default {
     },
     cameraTargetArtwork: function(artwork){
       this.teleportingCamera.targetArtwork(artwork)
-    },
-    positioningInitialized: function(){
-      this.overlay = false
     },
     resize: function (){
       this.scene.getEngine().resize()

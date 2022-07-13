@@ -182,7 +182,7 @@ class Walls{
         let artworkMesh = BABYLON.MeshBuilder.CreateBox('box', options, this.scene);
 
         const mat = new BABYLON.StandardMaterial("mat", this.scene);
-        mat.diffuseTexture = new BABYLON.Texture(artwork.image_url, this.scene, false, true, BABYLON.Texture.CUBIC_MODE,()=> {this.parentComponent.positioningInitialized()});
+        mat.diffuseTexture = new BABYLON.Texture(artwork.image_url, this.scene, false, true, BABYLON.Texture.CUBIC_MODE,()=> {this.parentComponent.loading = false});
         mat.diffuseColor = new BABYLON.Color3(1, 0, 1);
         mat.specularColor = new BABYLON.Color3(0.5, 0.6, 0.87);
         mat.emissiveColor = new BABYLON.Color3(1, 1, 1);
