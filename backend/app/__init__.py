@@ -56,31 +56,31 @@ def register_extensions(app):
 
     talisman = Talisman(
         app,
-        content_security_policy=
-        {
-        'default-src': [
-            "'self'",
-            "preview.babylonjs.com"
-        ],
-        'img-src':[
-            "'self' data: blob:",
-            'imagesshowroom.s3.amazonaws.com'
-        ] ,
-        'script-src':[
-            "'self' 'unsafe-eval' blob: ",
-            "cdn.jsdelivr.net",
-            "preview.babylonjs.com"
-
-        ],
-        'style-src':[
-            "'self' 'unsafe-inline'",
-            "fonts.googleapis.com",
-            "cdn.jsdelivr.net"
-        ],
-        'font-src':[
-            "'self'",
-            'fonts.gstatic.com',
-            "cdn.jsdelivr.net"
-        ]
-        }
+        content_security_policy= None
+        # {
+        # 'default-src': [
+        #     "'self'",
+        #     "preview.babylonjs.com"
+        # ],
+        # 'img-src':[
+        #     "'self' data: blob:",
+        #     'imagesshowroom.s3.amazonaws.com'
+        # ] ,
+        # 'script-src':[
+        #     "'self' 'unsafe-eval' blob: ",
+        #     "cdn.jsdelivr.net",
+        #     "preview.babylonjs.com"
+        #
+        # ],
+        # 'style-src':[
+        #     "'self' 'unsafe-inline'",
+        #     "fonts.googleapis.com",
+        #     "cdn.jsdelivr.net"
+        # ],
+        # 'font-src':[
+        #     "'self'",
+        #     'fonts.gstatic.com',
+        #     "cdn.jsdelivr.net"
+        # ]
+        # }
     )
