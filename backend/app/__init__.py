@@ -56,19 +56,56 @@ def register_extensions(app):
 
     talisman = Talisman(
         app,
-        content_security_policy={
-            'default-src': "'self'",
-            'img-src':[
-                "'self'",
-                'https://imagesshowroom.s3.eu-central-1.amazonaws.com'
-            ] ,
-            'script-src':[
-                "'self'",
-                "cdn.jsdeliver.net"
-            ],
-            'style-src':[
-                "'self'",
-                "fonts.googleapis.com"
-            ]
-        }
+        content_security_policy=None
+        # {
+        # 'default-src': [
+        #     "'self'",
+        #     "preview.babylonjs.com",
+        #     'cdn.jsdeliver.com',
+        #     'fonts.googleapis.com'
+        # ],
+        # 'img-src':[
+        #     "'self'",
+        #     'https://imagesshowroom.s3.eu-central-1.amazonaws.com'
+        # ] ,
+        # 'script-src':[
+        #     "'self'",
+        #     "cdn.jsdeliver.net"
+        # ],
+        # 'style-src':[
+        #     "'self'",
+        #     "fonts.googleapis.com"
+        #     "cdn.jsdeliver.net"
+        # ],
+        # 'font-src':[
+        #     "'self'",
+        #     'fonts.gstatic.com',
+        # ]
+        # }
     )
+
+# {
+            # 'default-src': [
+            #     "'self'",
+            #     "preview.babylonjs.com",
+            #     'cdn.jsdeliver.com',
+            #     'fonts.googleapis.com'
+            # ],
+            # 'img-src':[
+            #     "'self'",
+            #     'https://imagesshowroom.s3.eu-central-1.amazonaws.com'
+            # ] ,
+            # 'script-src':[
+            #     "'self'",
+            #     "cdn.jsdeliver.net"
+            # ],
+            # 'style-src':[
+            #     "'self'",
+            #     "fonts.googleapis.com"
+            #     "cdn.jsdeliver.net"
+            # ],
+            # 'font-src':[
+            #     "'self'",
+            #     'fonts.gstatic.com',
+            # ]
+        # }
