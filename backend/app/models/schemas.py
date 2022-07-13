@@ -32,8 +32,8 @@ class ArtworkSchema(Schema):
     class Meta:
         fields = ("id", "name", "width", "height", "sold", "added_date", "image_url", "orientation_quaternion", "position_vector")
 
-    orientation_quaternion = fields.Nested(QuaternionSchema(only=["x", "y", "z", "w"]))
-    position_vector = fields.Nested(VectorSchema(only=["x", "y", "z"]))
+    orientation_quaternion = fields.Nested(QuaternionSchema(only=["x", "y", "z", "w"]), allow_none=True)
+    position_vector = fields.Nested(VectorSchema(only=["x", "y", "z"]), allow_none=True)
 
 
 class LoginSchema(Schema):

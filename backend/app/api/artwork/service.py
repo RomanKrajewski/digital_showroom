@@ -135,17 +135,21 @@ class ArtworkService:
             artwork.image_url = image_url
 
             if position_vector := data.get("position_vector", None):
-                if not artwork.position_vector:
+                if not artwork.position_vector: #add a position vector and save the values
                     vector = Vector(x=position_vector["x"], y=position_vector["y"], z=position_vector["z"])
                     db.session.add(vector)
                     db.session.flush()
                     artwork.position_vector_id = vector.id
                 else:
                     vector = Vector.query.filter_by(id=artwork.position_vector_id).first()
-                    if not vector.compareWithDict(position_vector):
+                    if not vector.compareWithDict(position_vector): #modify exisiting position vector
                         vector.x = position_vector["x"]
                         vector.y = position_vector["y"]
                         vector.z = position_vector["z"]
+
+            elif artwork.position_vector and 'position_vector' in data: #if key is in data and explicitly null, delete the position
+                artwork.position_vector_id = None
+                db.session.delete(artwork.position_vector)
 
             if orientation_quaternion := data.get("orientation_quaternion", None):
                 if not artwork.orientation_quaternion:
@@ -161,6 +165,10 @@ class ArtworkService:
                         quaternion.z = orientation_quaternion["z"]
                         quaternion.w = orientation_quaternion["w"]
 
+            elif artwork.orientation_quaternion and 'position_vector' in data: #if key is in data and explicitly null, delete the orientation
+                artwork.orientation_quaternion_id = None
+                db.session.delete(artwork.position_vector)
+
 
             db.session.commit()
 
@@ -170,7 +178,7 @@ class ArtworkService:
             resp = message(True, "Artwork has been changed.")
             resp["artwork"] = artwork_info
 
-            return resp, 201
+            return resp, 200
 
         except Exception as error:
             current_app.logger.error(error)

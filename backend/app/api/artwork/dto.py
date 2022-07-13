@@ -34,8 +34,8 @@ class ArtworkDto:
             "image_url": fields.String(),
             "sold": fields.Boolean(required=True),
             "added_date": fields.DateTime,
-            "position_vector": fields.Nested(vector),
-            "orientation_quaternion": fields.Nested(quaternion)
+            "position_vector": fields.Nested(vector, allow_null=True),
+            "orientation_quaternion": fields.Nested(quaternion, allow_null=True)
         },
     )
 

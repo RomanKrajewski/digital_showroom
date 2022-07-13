@@ -31,7 +31,7 @@ class ArtworkDetails(Resource):
             404: "Artwork not found!",
         },
     )
-    @api.expect(ArtworkDto.artwork, validate=True)
+    @api.expect(ArtworkDto.artwork)
     @jwt_required()
     def post(self, artwork_id):
         """ Modify a scpecific artwork"""
@@ -73,7 +73,7 @@ class ArtworkGeneral(Resource):
             400: "Malformed data or validations failed.",
         },
     )
-    @api.expect(ArtworkDto.artwork, validate=True)
+    @api.expect(ArtworkDto.artwork)
     def post(self):
         artwork_data = request.get_json()
         schema = ArtworkSchema()
