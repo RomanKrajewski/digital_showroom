@@ -5,10 +5,10 @@
           <v-text-field label="Titel" v-model="artwork.name" required ></v-text-field>
         <v-row>
           <v-col cols = "3">
-            <v-text-field label="Breite" dense v-model.number="artwork.width" required suffix="cm"></v-text-field>
+            <v-text-field label="Höhe" cols="3" dense v-model.number="artwork.height" required suffix="cm"></v-text-field>
           </v-col>
           <v-col cols = "3">
-            <v-text-field label="Höhe" cols="3" dense v-model.number="artwork.height" required suffix="cm"></v-text-field>
+            <v-text-field label="Breite" dense v-model.number="artwork.width" required suffix="cm"></v-text-field>
           </v-col>
           <v-checkbox dense v-model="artwork.sold" label="Verkauft"></v-checkbox>
         </v-row>
