@@ -56,56 +56,31 @@ def register_extensions(app):
 
     talisman = Talisman(
         app,
-        content_security_policy=None
-        # {
-        # 'default-src': [
-        #     "'self'",
-        #     "preview.babylonjs.com",
-        #     'cdn.jsdeliver.com',
-        #     'fonts.googleapis.com'
-        # ],
-        # 'img-src':[
-        #     "'self'",
-        #     'https://imagesshowroom.s3.eu-central-1.amazonaws.com'
-        # ] ,
-        # 'script-src':[
-        #     "'self'",
-        #     "cdn.jsdeliver.net"
-        # ],
-        # 'style-src':[
-        #     "'self'",
-        #     "fonts.googleapis.com"
-        #     "cdn.jsdeliver.net"
-        # ],
-        # 'font-src':[
-        #     "'self'",
-        #     'fonts.gstatic.com',
-        # ]
-        # }
-    )
+        content_security_policy=
+        {
+        'default-src': [
+            "'self'",
+            "preview.babylonjs.com"
+        ],
+        'img-src':[
+            "'self' data: blob:",
+            'imagesshowroom.s3.amazonaws.com'
+        ] ,
+        'script-src':[
+            "'self' 'unsafe-eval' blob: ",
+            "cdn.jsdelivr.net",
+            "preview.babylonjs.com"
 
-# {
-            # 'default-src': [
-            #     "'self'",
-            #     "preview.babylonjs.com",
-            #     'cdn.jsdeliver.com',
-            #     'fonts.googleapis.com'
-            # ],
-            # 'img-src':[
-            #     "'self'",
-            #     'https://imagesshowroom.s3.eu-central-1.amazonaws.com'
-            # ] ,
-            # 'script-src':[
-            #     "'self'",
-            #     "cdn.jsdeliver.net"
-            # ],
-            # 'style-src':[
-            #     "'self'",
-            #     "fonts.googleapis.com"
-            #     "cdn.jsdeliver.net"
-            # ],
-            # 'font-src':[
-            #     "'self'",
-            #     'fonts.gstatic.com',
-            # ]
-        # }
+        ],
+        'style-src':[
+            "'self' 'unsafe-inline'",
+            "fonts.googleapis.com",
+            "cdn.jsdelivr.net"
+        ],
+        'font-src':[
+            "'self'",
+            'fonts.gstatic.com',
+            "cdn.jsdelivr.net"
+        ]
+        }
+    )

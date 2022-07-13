@@ -52,14 +52,17 @@ export default {
     }
   },
   mounted() {
+    this.overlay = true
     window.addEventListener('resize', this.resize);
     const engine = new BABYLON.Engine(this.$refs.canvas, true);
     const vm = this
+    BABYLON.SceneLoader.ShowLoadingScreen = false;
     BABYLON.SceneLoader.Load(`${process.env.VUE_APP_BACKEND_URL}/static/`, 'model.glb', engine,
         function(scene){
           vm.debug_message = 'success'
           try{
             vm.scene = vm.setup_scene(scene)
+            vm.overlay = false
           }
           catch (e){
             console.log(e)
