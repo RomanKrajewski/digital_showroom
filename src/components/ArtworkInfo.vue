@@ -39,7 +39,8 @@
         <v-btn  class="ma-1" small color="primary" :href="contactLink">Kontakt</v-btn>
       </v-row>
         <v-row v-if="userStore.isLoggedIn && !deleting && !editing" class="pa-1">
-          <v-btn class="ma-1" small color="primary" @click="$emit('positioning' , artwork)">Positionieren</v-btn>
+          <v-btn class="ma-1" small color="primary" @click="$emit('positioning' , artwork)">{{ artwork.position_vector?'Umhängen':'Hängen'}}</v-btn>
+          <v-btn class="ma-1" small color="primary" @click="resetPosition">Abhängen</v-btn>
           <v-btn class="ma-1" small color="primary" @click="editing = true">Bearbeiten</v-btn>
           <v-btn class="ma-1" small color="primary" @click="deleting = true">Löschen</v-btn>
         </v-row>
@@ -123,6 +124,11 @@ export default {
       this.artwork = artwork
       this.editing = false
       this.$emit('artwork-updated', this.artwork)
+    },
+    resetPosition: async function(){
+      this.artwork.position_vector = null
+      this.artwork.orientation_quaternion = null
+      await this.saveArtwork()
     },
     selectFile: async function(){
       let fileInputElement = this.$refs.file;
