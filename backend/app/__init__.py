@@ -57,11 +57,18 @@ def register_extensions(app):
     talisman = Talisman(
         app,
         content_security_policy={
-            'default-src': 'self',
-            'img-src': 'https://imagesshowroom.s3.eu-central-1.amazonaws.com',
-        },
-        content_security_policy_nonce_in=['script-src'],
-        feature_policy={
-            'geolocation': '\'none\'',
+            'default-src': "'self'",
+            'img-src':[
+                "'self'",
+                'https://imagesshowroom.s3.eu-central-1.amazonaws.com'
+            ] ,
+            'script-src':[
+                "'self'",
+                "cdn.jsdeliver.net"
+            ],
+            'style-src':[
+                "'self'",
+                "fonts.googleapis.com"
+            ]
         }
     )
