@@ -61,4 +61,8 @@ export default {
     top: 0;
     z-index: 10;
   }
+  /*used by overlay content in artwork list*/
+  .width-90{
+    width:90%;
+  }
 </style>

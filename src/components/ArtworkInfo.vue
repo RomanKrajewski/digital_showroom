@@ -1,27 +1,27 @@
 <template>
 <div id="artwork_details_pane" v-if="artwork">
-  <v-card class = "pa-1" >
-    <v-form class="pa-3" v-if="editing" v-model="form.valid">
-          <v-text-field label="Titel" v-model="artwork.name" required ></v-text-field>
+  <v-card class="pa-3">
+    <v-form v-if="editing" v-model="form.valid" class="pa-6 pb-0">
         <v-row>
-          <v-col cols = "3">
-            <v-text-field label="Höhe" cols="3" dense v-model.number="artwork.height" required suffix="cm"></v-text-field>
-          </v-col>
-          <v-col cols = "3">
-            <v-text-field label="Breite" dense v-model.number="artwork.width" required suffix="cm"></v-text-field>
-          </v-col>
+          <v-text-field dense label="Titel" v-model="artwork.name" required ></v-text-field>
+        </v-row>
+        <v-row>
+            <v-text-field class="pl-1" label="Höhe" dense v-model.number="artwork.height" required suffix="cm"></v-text-field>
+            <v-text-field class="pl-1" label="Breite" dense v-model.number="artwork.width" required suffix="cm"></v-text-field>
+        </v-row>
+        <v-row>
           <v-checkbox dense v-model="artwork.sold" label="Verkauft"></v-checkbox>
         </v-row>
       <input ref="file" type="file" hidden accept="image/*" @change="uploadFileAWS">
 
     </v-form>
-    <div v-if="!editing">
+    <div v-if="!editing" class="pa-1">
       <v-card-title>{{ artwork.name }}</v-card-title>
       <v-card-subtitle>{{artwork.height}} x {{artwork.width}} cm</v-card-subtitle>
       <v-card-subtitle v-if="artwork.sold">Verkauft</v-card-subtitle>
       <v-card-subtitle v-if="!artwork.sold">Verfügbar</v-card-subtitle>
     </div>
-    <v-container class="pa-1">
+    <v-container class="pa-0">
       <v-img v-if="!editing" contain max-height="200" :src="artwork.image_url?artwork.image_url: 'https://imagesshowroom.s3.amazonaws.com/placeholder.jpg'" ></v-img>
       <v-container id="upload_container" v-if="editing" :style="`background-image: url(${artwork.image_url?artwork.image_url:'https://imagesshowroom.s3.amazonaws.com/placeholder.jpg'})`">
         <v-btn v-if="!uploading" color="success" @click="selectFile">
@@ -35,19 +35,20 @@
       </v-container>
     </v-container>
     <v-card-actions>
-      <v-row v-if="!userStore.isLoggedIn" class="pa-1">
+      <v-row v-if="!userStore.isLoggedIn" >
         <v-btn  class="ma-1" small color="primary" :href="contactLink">Kontakt</v-btn>
       </v-row>
-        <v-row v-if="userStore.isLoggedIn && !deleting && !editing" class="pa-1">
+        <v-row v-if="userStore.isLoggedIn && !deleting && !editing">
           <v-btn class="ma-1" small color="primary" @click="$emit('positioning' , artwork)">{{ artwork.position_vector?'Umhängen':'Hängen'}}</v-btn>
-          <v-btn class="ma-1" small color="primary" @click="resetPosition">Abhängen</v-btn>
+          <v-btn v-if="artwork.position_vector" class="ma-1" small color="primary" @click="resetPosition">Abhängen</v-btn>
           <v-btn class="ma-1" small color="primary" @click="editing = true">Bearbeiten</v-btn>
           <v-btn class="ma-1" small color="primary" @click="deleting = true">Löschen</v-btn>
         </v-row>
-      <v-row v-if="editing" class="pa-1">
+      <v-row v-if="editing">
           <v-btn class="ma-1" small color="primary" @click="saveArtwork">Speichern</v-btn>
+          <v-btn class="ma-1" small color="red" @click="abortEditing">Abbrechen</v-btn>
       </v-row>
-      <v-row v-if="deleting" class="pa-1">
+      <v-row v-if="deleting">
         <p class = "ma-2">Löschen?</p>
         <v-btn class="ma-1" small color="red" @click="deleteArtwork">Ja</v-btn>
         <v-btn class="ma-1" small color="grey" @click="deleting = false">Nein</v-btn>
@@ -113,6 +114,14 @@ export default {
       const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/api/artwork/${artwork.id}`)
       artwork = this.parseArtwork(response);
       return artwork
+    },
+    abortEditing: async function(){
+      if (this.artwork_id){
+        this.artwork = await this.fetchArtworkInfo({id: this.artwork_id})
+        this.editing = false
+      }else {
+        this.$emit('editing-aborted')
+      }
     },
     deleteArtwork: async function(){
       if(this.artwork.id){

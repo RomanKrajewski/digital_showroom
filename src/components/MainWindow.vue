@@ -53,8 +53,9 @@ export default {
   },
   mounted() {
     this.loading = true
-    window.addEventListener('resize', this.resize);
     const engine = new BABYLON.Engine(this.$refs.canvas, true);
+    engine.resize()
+    window.addEventListener('resize', () => engine.resize());
     const vm = this
     BABYLON.SceneLoader.ShowLoadingScreen = false;
     BABYLON.SceneLoader.Load(`${process.env.VUE_APP_BACKEND_URL}/static/`, 'model.glb', engine,
@@ -119,9 +120,6 @@ export default {
     cameraTargetArtwork: function(artwork){
       this.teleportingCamera.targetArtwork(artwork)
     },
-    resize: function (){
-      this.scene.getEngine().resize()
-    }
 
   }
 
