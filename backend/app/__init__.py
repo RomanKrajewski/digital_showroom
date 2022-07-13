@@ -7,6 +7,7 @@ This module:
 """
 
 from flask import Flask, send_from_directory
+from flask_talisman import Talisman
 
 # Import extensions
 from .extensions import bcrypt, cors, db, jwt, ma
@@ -52,3 +53,15 @@ def register_extensions(app):
     jwt.init_app(app)
     bcrypt.init_app(app)
     cors.init_app(app)
+
+    talisman = Talisman(
+        app,
+        content_security_policy={
+            'default-src': 'self',
+            'img-src': 'https://imagesshowroom.s3.eu-central-1.amazonaws.com',
+        },
+        content_security_policy_nonce_in=['script-src'],
+        feature_policy={
+            'geolocation': '\'none\'',
+        }
+    )
