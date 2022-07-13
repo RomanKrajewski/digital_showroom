@@ -189,10 +189,8 @@ class Walls{
             artworkMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPickTrigger}, () => {
                 if(videoTexture.video.paused){
                     videoTexture.video.play()
-                    videoTexture.video.muted = false
                 }else{
-                    videoTexture.video.pause()
-                    videoTexture.video.muted = true
+                    videoTexture.video.muted = !videoTexture.video.muted
                 }
             }))
         }else{
