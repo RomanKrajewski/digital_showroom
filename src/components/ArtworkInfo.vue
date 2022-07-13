@@ -12,7 +12,7 @@
         <v-row>
           <v-checkbox dense v-model="artwork.sold" label="Verkauft"></v-checkbox>
         </v-row>
-      <input ref="file" type="file" hidden accept="image/*" @change="uploadFileAWS">
+      <input ref="file" type="file" hidden accept="image/jpeg, video/mp4" @change="uploadFileAWS">
 
     </v-form>
     <div v-if="!editing" class="pa-1">
@@ -22,10 +22,11 @@
       <v-card-subtitle v-if="!artwork.sold">Verfügbar</v-card-subtitle>
     </div>
     <v-container class="pa-0">
+      <video v-if="artwork.image_url.endsWith('.mp4')" controls :src="artwork.image_url" style="width: 100%"></video>
       <v-img v-if="!editing" contain max-height="200" :src="artwork.image_url?artwork.image_url: 'https://imagesshowroom.s3.amazonaws.com/placeholder.jpg'" ></v-img>
       <v-container id="upload_container" v-if="editing" :style="`background-image: url(${artwork.image_url?artwork.image_url:'https://imagesshowroom.s3.amazonaws.com/placeholder.jpg'})`">
         <v-btn v-if="!uploading" color="success" @click="selectFile">
-          Upload
+          Upload mp4 oder jpg
         </v-btn>
         <v-progress-circular
             v-if="uploading"

@@ -116,7 +116,7 @@ class Walls{
             artworkMesh.position = new BABYLON.Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
 
             artworkMesh.rotationQuaternion = new BABYLON.Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
-            artworkMesh.actionManager = new BABYLON.ActionManager(this.scene)
+
             artworkMesh.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
                     () => {
@@ -180,9 +180,24 @@ class Walls{
         };
 
         let artworkMesh = BABYLON.MeshBuilder.CreateBox('box', options, this.scene);
-
+        artworkMesh.actionManager = new BABYLON.ActionManager(this.scene);
         const mat = new BABYLON.StandardMaterial("mat", this.scene);
-        mat.diffuseTexture = new BABYLON.Texture(artwork.image_url, this.scene, false, true, BABYLON.Texture.CUBIC_MODE,()=> {this.parentComponent.loading = false});
+        if(artwork.image_url.endsWith(".mp4")){
+            const videoTexture = new BABYLON.VideoTexture("video", artwork.image_url, this.scene, false, false, BABYLON.Texture.NEAREST_NEAREST)
+            videoTexture.onLoadObservable.add(()=> {this.parentComponent.loading = false})
+            mat.diffuseTexture = videoTexture
+            artworkMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPickTrigger}, () => {
+                if(videoTexture.video.paused){
+                    videoTexture.video.play()
+                    videoTexture.video.muted = false
+                }else{
+                    videoTexture.video.pause()
+                    videoTexture.video.muted = true
+                }
+            }))
+        }else{
+            mat.diffuseTexture = new BABYLON.Texture(artwork.image_url, this.scene, false, true, BABYLON.Texture.CUBIC_MODE,()=> {this.parentComponent.loading = false});
+        }
         mat.diffuseColor = new BABYLON.Color3(1, 0, 1);
         mat.specularColor = new BABYLON.Color3(0.5, 0.6, 0.87);
         mat.emissiveColor = new BABYLON.Color3(1, 1, 1);
