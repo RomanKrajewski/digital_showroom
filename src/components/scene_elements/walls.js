@@ -36,7 +36,6 @@ class Walls{
             depth: 0.1
         }, scene);
         this.positioningIndicator.setEnabled(false);
-
         this.scene.getMeshByName(ROOM_MESH_NAME).isPickable = true
 
         const positioningIndicator_material = new StandardMaterial("positioningIndicator_material", scene)
@@ -50,7 +49,8 @@ class Walls{
 
         scene.onPointerObservable.add((pointerInfo) => {
             if (pointerInfo.type === PointerEventTypes.POINTERMOVE) {
-                if (pointerInfo.pickInfo.pickedPoint) {
+                if (this.positioningIndicator.isEnabled()) {
+                    console.log("yes")
                     this.positioningIndicator.position = pointerInfo.pickInfo.pickedPoint;
                     const v1 = pointerInfo.pickInfo.getNormal(true)
                     const v2 = new Vector3(0, 0, -1)
@@ -58,8 +58,10 @@ class Walls{
 
                     this.positioningIndicator.rotation = new Vector3(0, 0, 0)
                     this.positioningIndicator.rotate(axisAngle[0], axisAngle[1])
-
+                }else{
+                    console.log("no")
                 }
+
             }
             if (pointerInfo.type === PointerEventTypes.POINTERTAP && this.positioningIndicator.isEnabled()) {
                 const rotation_vector = this.positioningIndicator.rotationQuaternion
@@ -98,6 +100,7 @@ class Walls{
                 () => {
                     this.wasLastOverWall = true
                     if (this.currentArtwork) {
+                        scene.hoverCursor = 'none'
                         this.positioningIndicator.setEnabled(true)
                     }
                 }))
@@ -107,7 +110,8 @@ class Walls{
                 () => {
                     this.wasLastOverWall = false
                     this.positioningIndicator.setEnabled(false)
-                }))
+                    scene.hoverCursor = 'default'
+            }))
 
     }
 
@@ -132,6 +136,17 @@ class Walls{
             artworkMesh.position = new Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
 
             artworkMesh.rotationQuaternion = new Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
+
+            artworkMesh.actionManager = new ActionManager(this.scene);
+            if (artworkMesh.videoTexture){
+                artworkMesh.actionManager.registerAction(new ExecuteCodeAction({trigger: ActionManager.OnPickTrigger}, () => {
+                    if(artworkMesh.videoTexture.video.paused){
+                        artworkMesh.videoTexture.video.play()
+                    }else{
+                        artworkMesh.videoTexture.video.muted = !artworkMesh.videoTexture.video.muted
+                    }
+                }))
+            }
 
             artworkMesh.actionManager.registerAction(
                 new ExecuteCodeAction({trigger: ActionManager.OnPointerOverTrigger},
@@ -170,6 +185,7 @@ class Walls{
         this.positioningIndicator.position.x = 1000
         this.positioningIndicator.position.y = 1000
         this.positioningIndicator.setEnabled(this.wasLastOverWall)
+        this.scene.hoverCursor = this.wasLastOverWall?'none':'default';
 
     }
 
@@ -196,19 +212,12 @@ class Walls{
         };
 
         let artworkMesh = MeshBuilder.CreateBox('box', options, this.scene);
-        artworkMesh.actionManager = new ActionManager(this.scene);
         const mat = new StandardMaterial("mat", this.scene);
         if(artwork.image_url.endsWith(".mp4")){
             const videoTexture = new VideoTexture("video", artwork.image_url, this.scene, false, false, Texture.NEAREST_NEAREST)
             videoTexture.onLoadObservable.add(()=> {this.parentComponent.loading = false})
             mat.diffuseTexture = videoTexture
-            artworkMesh.actionManager.registerAction(new ExecuteCodeAction({trigger: ActionManager.OnPickTrigger}, () => {
-                if(videoTexture.video.paused){
-                    videoTexture.video.play()
-                }else{
-                    videoTexture.video.muted = !videoTexture.video.muted
-                }
-            }))
+            artworkMesh.videoTexture = videoTexture
         }else{
             mat.diffuseTexture = new Texture(artwork.image_url, this.scene, false, true, Texture.CUBIC_MODE,()=> {this.parentComponent.loading = false});
         }
