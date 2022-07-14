@@ -1,8 +1,15 @@
-import * as BABYLON from "babylonjs";
-
 import {SCALING_FACTOR} from "@/constants";
 import {FreeCameraKeyboardRotateInput, MOVEMENT_KEYS} from "@/components/scene_elements/FreeCameraRotateInput";
 import {ROOM_MESH_NAME} from "@/components/scene_elements/walls";
+
+import {Matrix, Vector3, Quaternion} from "@babylonjs/core/Maths/math.vector"
+import {EasingFunction, QuadraticEase} from "@babylonjs/core/Animations/easing"
+import {FreeCamera} from "@babylonjs/core/Cameras/freeCamera"
+import {Animation} from "@babylonjs/core/Animations/animation"
+import "@babylonjs/core/Animations/animatable"
+import {Ray} from "@babylonjs/core/Culling/ray"
+import "@babylonjs/core/Collisions/collisionCoordinator"
+
 const CAMERA_DEFAULT_HEIGHT = 1.20 * SCALING_FACTOR
 const FOV = 0.8 //horizontal fov in radians
 class TeleportingCamera {
@@ -10,7 +17,7 @@ class TeleportingCamera {
 
         this.scene = scene;
         this.canvas = scene.getEngine().getRenderingCanvas();
-        this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, CAMERA_DEFAULT_HEIGHT, 0),this.scene);
+        this.camera = new FreeCamera("camera", new Vector3(0, CAMERA_DEFAULT_HEIGHT, 0),this.scene);
 
         this.camera.attachControl(this.canvas, true);
         this.camera.minZ = 0.1
@@ -19,7 +26,7 @@ class TeleportingCamera {
         this.cameraHeightAnimationRunning = false;
         this.cameraTargetHeightAnimationRunning = false;
 
-        this.camera.ellipsoid = new BABYLON.Vector3(0.5, CAMERA_DEFAULT_HEIGHT/2, 0.5);
+        this.camera.ellipsoid = new Vector3(0.5, CAMERA_DEFAULT_HEIGHT/2, 0.5);
         scene.collisionsEnabled = true;
         this.camera.checkCollisions = true;
         scene.getMeshByName(ROOM_MESH_NAME).checkCollisions = true
@@ -40,21 +47,21 @@ class TeleportingCamera {
     
     teleport(pointerInfo){
         const wall_pos_x =this.scene.pickWithRay(
-            new BABYLON.Ray(
-                new BABYLON.Vector3(pointerInfo.pickInfo.pickedPoint.x,this.camera.position.y, pointerInfo.pickInfo.pickedPoint.z),
-                new BABYLON.Vector3(1,0,0)))
+            new Ray(
+                new Vector3(pointerInfo.pickInfo.pickedPoint.x,this.camera.position.y, pointerInfo.pickInfo.pickedPoint.z),
+                new Vector3(1,0,0)))
         const wall_neg_x =this.scene.pickWithRay(
-            new BABYLON.Ray(
-                new BABYLON.Vector3(pointerInfo.pickInfo.pickedPoint.x,this.camera.position.y, pointerInfo.pickInfo.pickedPoint.z),
-                new BABYLON.Vector3(-1,0,0)))
+            new Ray(
+                new Vector3(pointerInfo.pickInfo.pickedPoint.x,this.camera.position.y, pointerInfo.pickInfo.pickedPoint.z),
+                new Vector3(-1,0,0)))
         const wall_pos_z =this.scene.pickWithRay(
-            new BABYLON.Ray(
-                new BABYLON.Vector3(pointerInfo.pickInfo.pickedPoint.x,this.camera.position.y, pointerInfo.pickInfo.pickedPoint.z),
-                new BABYLON.Vector3(0,0,1)))
+            new Ray(
+                new Vector3(pointerInfo.pickInfo.pickedPoint.x,this.camera.position.y, pointerInfo.pickInfo.pickedPoint.z),
+                new Vector3(0,0,1)))
         const wall_neg_z =this.scene.pickWithRay(
-            new BABYLON.Ray(
-                new BABYLON.Vector3(pointerInfo.pickInfo.pickedPoint.x,this.camera.position.y, pointerInfo.pickInfo.pickedPoint.z),
-                new BABYLON.Vector3(0,0,-1)))
+            new Ray(
+                new Vector3(pointerInfo.pickInfo.pickedPoint.x,this.camera.position.y, pointerInfo.pickInfo.pickedPoint.z),
+                new Vector3(0,0,-1)))
         const distance_factor = 1.5
 
         const pick_boarder_x_pos = wall_pos_x.pickedPoint ? wall_pos_x.pickedPoint.x - distance_factor * this.camera.minZ : pointerInfo.pickInfo.pickedPoint.x
@@ -64,7 +71,7 @@ class TeleportingCamera {
 
         const newCameraX= Math.max(Math.min(pick_boarder_x_pos, pointerInfo.pickInfo.pickedPoint.x), pick_boarder_x_neg)
         const newCameraZ = Math.max(Math.min(pick_boarder_z_pos, pointerInfo.pickInfo.pickedPoint.z), pick_boarder_z_neg)
-        this.animateTo(new BABYLON.Vector3(newCameraX, this.camera.position.y, newCameraZ));
+        this.animateTo(new Vector3(newCameraX, this.camera.position.y, newCameraZ));
     }
 
     animateToDefaultHeight(){
@@ -74,12 +81,12 @@ class TeleportingCamera {
 
         this.camera.animations = []
 
-        const animation = new BABYLON.Animation(
+        const animation = new Animation(
             "camera",
             "position.y",
             60,
-            BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-            BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+            Animation.ANIMATIONTYPE_FLOAT,
+            Animation.ANIMATIONLOOPMODE_CONSTANT
         );
 
         const keys = [];
@@ -102,12 +109,12 @@ class TeleportingCamera {
         }
 
         this.camera.animations = []
-        const animation = new BABYLON.Animation(
+        const animation = new Animation(
             "camera",
             "rotation.x",
             60,
-            BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-            BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+            Animation.ANIMATIONTYPE_FLOAT,
+            Animation.ANIMATIONLOOPMODE_CONSTANT
         );
 
         const keys = [];
@@ -125,12 +132,12 @@ class TeleportingCamera {
     animateTo(cameraPosition, cameraTarget = null) {
         this.camera.animations = [];
 
-        const positionAnimation = new BABYLON.Animation(
+        const positionAnimation = new Animation(
             "camera",
             "position",
             60,
-            BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
-            BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+            Animation.ANIMATIONTYPE_VECTOR3,
+            Animation.ANIMATIONLOOPMODE_CONSTANT
         );
 
         const keys = [];
@@ -143,12 +150,12 @@ class TeleportingCamera {
         this.camera.animations.push(positionAnimation);
 
         if(cameraTarget){
-            const targetAnimation = new BABYLON.Animation(
+            const targetAnimation = new Animation(
                 "camera",
                 "target",
                 60,
-                BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
-                BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+                Animation.ANIMATIONTYPE_VECTOR3,
+                Animation.ANIMATIONLOOPMODE_CONSTANT
             );
 
             const keys = [];
@@ -165,8 +172,8 @@ class TeleportingCamera {
     }
 
     getQuadraticEaseOut(){
-        let easingFunction = new BABYLON.QuadraticEase();
-        easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT);
+        let easingFunction = new QuadraticEase();
+        easingFunction.setEasingMode(EasingFunction.EASINGMODE_EASEOUT);
         return easingFunction
     }
     targetArtwork(artworkDetails){
@@ -176,13 +183,13 @@ class TeleportingCamera {
         const l_height = half_h/Math.atan(this.camera.fov/2);
         const l_width = half_w/Math.atan(this.camera.fov*canvasRatio/2)
         const l = Math.max(l_width, l_height)
-        const cameraPositioningVector = new BABYLON.Vector3(0,0,-l)
+        const cameraPositioningVector = new Vector3(0,0,-l)
 
-        const yprQuaternion = new BABYLON.Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
-        const rotationMatrix = new BABYLON.Matrix();
+        const yprQuaternion = new Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
+        const rotationMatrix = new Matrix();
         yprQuaternion.toRotationMatrix(rotationMatrix);
-        const rotatedPositioningVector = BABYLON.Vector3.TransformCoordinates(cameraPositioningVector, rotationMatrix);
-        const imagePosition = new BABYLON.Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
+        const rotatedPositioningVector = Vector3.TransformCoordinates(cameraPositioningVector, rotationMatrix);
+        const imagePosition = new Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
 
         this.animateTo(imagePosition.add(rotatedPositioningVector), imagePosition)
 

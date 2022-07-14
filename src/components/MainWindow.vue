@@ -28,13 +28,17 @@ import ArtworkList from "./ArtworkList";
 import LoginForm from "./LoginForm";
 import ArtworkHoverInfo from "./ArtworkHoverInfo";
 import ArtworkFocusInfo from "@/components/ArtworkFocusInfo";
-import * as BABYLON from 'babylonjs';
-import 'babylonjs-loaders';
 import {TeleportingCamera} from "@/components/scene_elements/teleportingCamera";
 import {Ground} from "@/components/scene_elements/ground";
 import {Walls} from "@/components/scene_elements/walls";
 import {MOVEMENT_KEYS} from "@/components/scene_elements/FreeCameraRotateInput";
 
+import {Color3} from "@babylonjs/core/Maths/math.color"
+import {Engine} from "@babylonjs/core/Engines/engine"
+import {PointerEventTypes} from "@babylonjs/core/Events/pointerEvents"
+import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader"
+
+import "@babylonjs/loaders/glTF"
 export default {
 
   name: 'MainWindow',
@@ -53,12 +57,12 @@ export default {
   },
   mounted() {
     this.loading = true
-    const engine = new BABYLON.Engine(this.$refs.canvas, true);
+    const engine = new Engine(this.$refs.canvas, true);
     engine.resize()
     window.addEventListener('resize', () => engine.resize());
     const vm = this
-    BABYLON.SceneLoader.ShowLoadingScreen = false;
-    BABYLON.SceneLoader.Load(`${process.env.VUE_APP_BACKEND_URL}/static/`, 'model.glb', engine,
+    SceneLoader.ShowLoadingScreen = false;
+    SceneLoader.Load(`${process.env.VUE_APP_BACKEND_URL}/static/`, 'model.glb', engine,
         function(scene){
           vm.debug_message = 'success'
           try{
@@ -85,19 +89,19 @@ export default {
       });
       this.setupArtworkFocusEventListeners(scene);
 
-      scene.clearColor = new BABYLON.Color3(1, 1, 1);
+      scene.clearColor = new Color3(1, 1, 1);
 
       return scene;
     },
     setupArtworkFocusEventListeners: function (scene) {
       scene.onPointerObservable.add((pointerInfo) => {
-        if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERDOWN) {
+        if (pointerInfo.type === PointerEventTypes.POINTERDOWN) {
           this.pointerDown = true
         }
-        if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERUP) {
+        if (pointerInfo.type === PointerEventTypes.POINTERUP) {
           this.pointerDown = false
         }
-        if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERMOVE && this.pointerDown) {
+        if (pointerInfo.type === PointerEventTypes.POINTERMOVE && this.pointerDown) {
           this.teleportingCamera.animateToDefaultHeight()
           this.focusedArtwork = null
         }

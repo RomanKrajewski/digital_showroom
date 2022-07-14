@@ -1,9 +1,25 @@
-import * as BABYLON from "babylonjs";
 import {SCALING_FACTOR} from "@/constants";
 import {getRotationBetweenVectors} from "@/utils";
 import axios from "axios";
 import ArtworkInfo from "../ArtworkInfo";
 export const ROOM_MESH_NAME = 'Raum_primitive0'
+
+import {Color3} from "@babylonjs/core/Maths/math.color"
+import {PointerEventTypes} from "@babylonjs/core/Events/pointerEvents"
+import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder"
+import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial"
+import {Vector3, Vector4, Quaternion} from "@babylonjs/core/Maths/math.vector"
+import {Angle} from "@babylonjs/core/Maths/math"
+import {HemisphericLight} from "@babylonjs/core/Lights/hemisphericLight"
+import {ActionManager} from "@babylonjs/core/Actions/actionManager"
+import {ExecuteCodeAction} from "@babylonjs/core/Actions/directActions"
+import {VideoTexture} from "@babylonjs/core/Materials/Textures/videoTexture"
+import {Texture} from "@babylonjs/core/Materials/Textures/texture"
+
+
+
+import "@babylonjs/core/Meshes/Builders/boxBuilder";
+
 class Walls{
     positioningIndicator
     currentArtwork = null
@@ -14,7 +30,7 @@ class Walls{
     constructor(scene, parentComponent) {
         this.parentComponent = parentComponent
         this.scene = scene
-        this.positioningIndicator = BABYLON.MeshBuilder.CreateBox("positioningIndicator", {
+        this.positioningIndicator = MeshBuilder.CreateBox("positioningIndicator", {
             width: 0.5,
             height: 0.25,
             depth: 0.1
@@ -23,29 +39,29 @@ class Walls{
 
         this.scene.getMeshByName(ROOM_MESH_NAME).isPickable = true
 
-        const positioningIndicator_material = new BABYLON.StandardMaterial("positioningIndicator_material", scene)
+        const positioningIndicator_material = new StandardMaterial("positioningIndicator_material", scene)
         positioningIndicator_material.alpha = 0.3
         positioningIndicator_material.material = positioningIndicator_material
 
-        const hemi1 = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, -1, 0), scene);
+        const hemi1 = new HemisphericLight("HemiLight", new Vector3(0, -1, 0), scene);
         hemi1.intensity = 1;
-        hemi1.groundColor = new BABYLON.Color3(1, 1, 1);
-        hemi1.specular = BABYLON.Color3.Black();
+        hemi1.groundColor = new Color3(1, 1, 1);
+        hemi1.specular = Color3.Black();
 
         scene.onPointerObservable.add((pointerInfo) => {
-            if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERMOVE) {
+            if (pointerInfo.type === PointerEventTypes.POINTERMOVE) {
                 if (pointerInfo.pickInfo.pickedPoint) {
                     this.positioningIndicator.position = pointerInfo.pickInfo.pickedPoint;
                     const v1 = pointerInfo.pickInfo.getNormal(true)
-                    const v2 = new BABYLON.Vector3(0, 0, -1)
+                    const v2 = new Vector3(0, 0, -1)
                     const axisAngle = getRotationBetweenVectors(v1, v2)
 
-                    this.positioningIndicator.rotation = new BABYLON.Vector3(0, 0, 0)
+                    this.positioningIndicator.rotation = new Vector3(0, 0, 0)
                     this.positioningIndicator.rotate(axisAngle[0], axisAngle[1])
 
                 }
             }
-            if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERTAP && this.positioningIndicator.isEnabled()) {
+            if (pointerInfo.type === PointerEventTypes.POINTERTAP && this.positioningIndicator.isEnabled()) {
                 const rotation_vector = this.positioningIndicator.rotationQuaternion
                 let newOrientationQuaternion = {
                     x: rotation_vector.x,
@@ -75,10 +91,10 @@ class Walls{
         })
 
         let mesh = scene.getMeshByName(ROOM_MESH_NAME)
-        mesh.actionManager = new BABYLON.ActionManager(scene)
+        mesh.actionManager = new ActionManager(scene)
 
         mesh.actionManager.registerAction(
-            new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
+            new ExecuteCodeAction({trigger: ActionManager.OnPointerOverTrigger},
                 () => {
                     this.wasLastOverWall = true
                     if (this.currentArtwork) {
@@ -87,7 +103,7 @@ class Walls{
                 }))
 
         mesh.actionManager.registerAction(
-            new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOutTrigger},
+            new ExecuteCodeAction({trigger: ActionManager.OnPointerOutTrigger},
                 () => {
                     this.wasLastOverWall = false
                     this.positioningIndicator.setEnabled(false)
@@ -113,25 +129,25 @@ class Walls{
             }
             const artworkMesh = this.createArtworkMesh(artworkDetails)
 
-            artworkMesh.position = new BABYLON.Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
+            artworkMesh.position = new Vector3(artworkDetails.position_vector.x, artworkDetails.position_vector.y, artworkDetails.position_vector.z)
 
-            artworkMesh.rotationQuaternion = new BABYLON.Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
+            artworkMesh.rotationQuaternion = new Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
 
             artworkMesh.actionManager.registerAction(
-                new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOverTrigger},
+                new ExecuteCodeAction({trigger: ActionManager.OnPointerOverTrigger},
                     () => {
                     this.scene.hoverCursor = 'pointer'
                     this.parentComponent.hoveringArtwork = artworkDetails;
                     }))
             artworkMesh.actionManager.registerAction(
-                new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPointerOutTrigger},
+                new ExecuteCodeAction({trigger: ActionManager.OnPointerOutTrigger},
                     () => {
                         this.scene.hoverCursor = 'default'
                         this.parentComponent.hoveringArtwork = null;
                     })
             )
             artworkMesh.actionManager.registerAction(
-                new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPickTrigger},
+                new ExecuteCodeAction({trigger: ActionManager.OnPickTrigger},
                     () => {
                         this.parentComponent.cameraTargetArtwork(artworkDetails)
                         this.parentComponent.focusedArtwork = artworkDetails
@@ -161,13 +177,13 @@ class Walls{
         let faceUV = []
         for (let i = 0; i < 6; i++) {
             if (i === 0 ){
-                faceUV[i] = new BABYLON.Vector4(0, 0, 0, 0);
+                faceUV[i] = new Vector4(0, 0, 0, 0);
             }
             else if(i===1){
-                faceUV[i] = new BABYLON.Vector4(0,0,1,1)
+                faceUV[i] = new Vector4(0,0,1,1)
             }
             else{
-                faceUV[i] = new BABYLON.Vector4(0, 0, 0, 0);
+                faceUV[i] = new Vector4(0, 0, 0, 0);
             }
         }
         const meshWidth = SCALING_FACTOR * artwork.width / 100;
@@ -179,14 +195,14 @@ class Walls{
             faceUV:faceUV
         };
 
-        let artworkMesh = BABYLON.MeshBuilder.CreateBox('box', options, this.scene);
-        artworkMesh.actionManager = new BABYLON.ActionManager(this.scene);
-        const mat = new BABYLON.StandardMaterial("mat", this.scene);
+        let artworkMesh = MeshBuilder.CreateBox('box', options, this.scene);
+        artworkMesh.actionManager = new ActionManager(this.scene);
+        const mat = new StandardMaterial("mat", this.scene);
         if(artwork.image_url.endsWith(".mp4")){
-            const videoTexture = new BABYLON.VideoTexture("video", artwork.image_url, this.scene, false, false, BABYLON.Texture.NEAREST_NEAREST)
+            const videoTexture = new VideoTexture("video", artwork.image_url, this.scene, false, false, Texture.NEAREST_NEAREST)
             videoTexture.onLoadObservable.add(()=> {this.parentComponent.loading = false})
             mat.diffuseTexture = videoTexture
-            artworkMesh.actionManager.registerAction(new BABYLON.ExecuteCodeAction({trigger: BABYLON.ActionManager.OnPickTrigger}, () => {
+            artworkMesh.actionManager.registerAction(new ExecuteCodeAction({trigger: ActionManager.OnPickTrigger}, () => {
                 if(videoTexture.video.paused){
                     videoTexture.video.play()
                 }else{
@@ -194,44 +210,44 @@ class Walls{
                 }
             }))
         }else{
-            mat.diffuseTexture = new BABYLON.Texture(artwork.image_url, this.scene, false, true, BABYLON.Texture.CUBIC_MODE,()=> {this.parentComponent.loading = false});
+            mat.diffuseTexture = new Texture(artwork.image_url, this.scene, false, true, Texture.CUBIC_MODE,()=> {this.parentComponent.loading = false});
         }
-        mat.diffuseColor = new BABYLON.Color3(1, 0, 1);
-        mat.specularColor = new BABYLON.Color3(0.5, 0.6, 0.87);
-        mat.emissiveColor = new BABYLON.Color3(1, 1, 1);
-        mat.ambientColor = new BABYLON.Color3(0.23, 0.98, 0.53);
+        mat.diffuseColor = new Color3(1, 0, 1);
+        mat.specularColor = new Color3(0.5, 0.6, 0.87);
+        mat.emissiveColor = new Color3(1, 1, 1);
+        mat.ambientColor = new Color3(0.23, 0.98, 0.53);
         artworkMesh.material = mat;
 
-        const artworkShadow = BABYLON.MeshBuilder.CreatePlane('meshShadow', {width: meshWidth * 1.1, height: meshHeight*1.1})
+        const artworkShadow = MeshBuilder.CreatePlane('meshShadow', {width: meshWidth * 1.1, height: meshHeight*1.1})
         // artworkShadow.position.x += 0.05
         // artworkShadow.position.y -=0.05
         artworkShadow.position.z -=0.001
         artworkShadow.setParent(artworkMesh)
-        const black = new BABYLON.Color3(0,0,0)
-        const shadowMat = new BABYLON.StandardMaterial('shadowMat', this.scene);
+        const black = new Color3(0,0,0)
+        const shadowMat = new StandardMaterial('shadowMat', this.scene);
         shadowMat.diffuseColor = black
         shadowMat.specularColor = black;
         shadowMat.emissiveColor = black;
         shadowMat.ambientColor = black;
         if (artwork.width < 99 || artwork.height < 99){
-            shadowMat.opacityTexture = new BABYLON.Texture(`${process.env.VUE_APP_BACKEND_URL}/static/shadow_small.png`, this.scene)
+            shadowMat.opacityTexture = new Texture(`${process.env.VUE_APP_BACKEND_URL}/static/shadow_small.png`, this.scene)
         }else{
-            shadowMat.opacityTexture = new BABYLON.Texture(`${process.env.VUE_APP_BACKEND_URL}/static/shadow.png`, this.scene)
+            shadowMat.opacityTexture = new Texture(`${process.env.VUE_APP_BACKEND_URL}/static/shadow.png`, this.scene)
         }
         artworkShadow.material = shadowMat
         if (artwork.sold){
             const red_dot = this.createRedDot()
-            red_dot.position = new BABYLON.Vector3(artworkMesh.position.x + (artwork.width/2 + 5) * SCALING_FACTOR / 100, artworkMesh.position.y - (artwork.height /2 - 2.5) * SCALING_FACTOR /100, artworkMesh.position.z )
+            red_dot.position = new Vector3(artworkMesh.position.x + (artwork.width/2 + 5) * SCALING_FACTOR / 100, artworkMesh.position.y - (artwork.height /2 - 2.5) * SCALING_FACTOR /100, artworkMesh.position.z )
             red_dot.setParent(artworkMesh)
         }
         return artworkMesh
     }
 
     createRedDot = () => {
-        const red_dot = BABYLON.MeshBuilder.CreateCylinder("red_dot", {diameter: 0.02 * SCALING_FACTOR, height: 0.02 *SCALING_FACTOR}, this.scene);
-        red_dot.rotate(new BABYLON.Vector3(1,0,0), BABYLON.Angle.FromDegrees(90).radians())
-        const red = new BABYLON.Color3(0.6, 0.1, 0.1);
-        const red_dot_material = new BABYLON.StandardMaterial("red_dot_material", this.scene)
+        const red_dot = MeshBuilder.CreateCylinder("red_dot", {diameter: 0.02 * SCALING_FACTOR, height: 0.02 *SCALING_FACTOR}, this.scene);
+        red_dot.rotate(new Vector3(1,0,0), Angle.FromDegrees(90).radians())
+        const red = new Color3(0.6, 0.1, 0.1);
+        const red_dot_material = new StandardMaterial("red_dot_material", this.scene)
         red_dot_material.emissiveColor = red;
         red_dot_material.diffuseColor = red;
         red_dot_material.specularColor = red;

@@ -1,4 +1,5 @@
-import * as BABYLON from "babylonjs";
+import {Vector3} from "@babylonjs/core/Maths/math.vector";
+
 const MOVEMENT_SPEED = 6/10000
 const ROTATION_SPEED = 3/1000
 
@@ -36,11 +37,11 @@ export class FreeCameraKeyboardRotateInput{
             } else if (KEYS_RIGHT.indexOf(keyCode) !== -1) {
                 camera.rotation.y += ROTATION_SPEED * this.engine.getDeltaTime();
             } else if (KEYS_UP.indexOf(keyCode) !== -1){
-                const forward = camera.getDirection(BABYLON.Vector3.Forward())
+                const forward = camera.getDirection(Vector3.Forward())
                 forward.y = 0
                 camera.cameraDirection.addInPlace(forward.scale(MOVEMENT_SPEED * this.engine.getDeltaTime()));
             } else if (KEYS_DOWN.indexOf(keyCode) !== -1){
-                const backward = camera.getDirection(BABYLON.Vector3.Backward())
+                const backward = camera.getDirection(Vector3.Backward())
                 backward.y = 0
                 camera.cameraDirection.addInPlace(backward.scale(MOVEMENT_SPEED * this.engine.getDeltaTime()));
             }
