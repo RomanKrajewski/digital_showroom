@@ -22,7 +22,7 @@ class TeleportingCamera {
         this.camera.attachControl(this.canvas, true);
         this.camera.minZ = 0.1
         this.camera.fov = FOV
-
+        this.camera.rotation.y = Math.PI
         this.cameraHeightAnimationRunning = false;
         this.cameraTargetHeightAnimationRunning = false;
 
