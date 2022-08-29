@@ -1,8 +1,8 @@
 <template>
 <v-card id="artworkFocusInfoCard" v-if="artwork">
-  <v-card-title>{{artwork.name}}</v-card-title>
+  <v-card-title class="text-subtitle-1">{{artwork.name}}</v-card-title>
   <v-card-subtitle>{{artwork.height}} x {{artwork.width}} cm</v-card-subtitle>
-  <v-btn class="ma-1" small color="primary" :href="contactLink">Kontakt</v-btn>
+  <v-btn class="ma-1" variant="text" small color="primary" :href="contactLink">Kontakt</v-btn>
 </v-card>
 </template>
 
