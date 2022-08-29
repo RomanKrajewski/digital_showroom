@@ -219,7 +219,7 @@ class Walls{
             mat.diffuseTexture = videoTexture
             artworkMesh.videoTexture = videoTexture
         }else{
-            mat.diffuseTexture = new Texture(artwork.image_url, this.scene, false, true, Texture.CUBIC_MODE,()=> {this.parentComponent.loading = false});
+            mat.diffuseTexture = new Texture(artwork.image_url + "?cacheblock=true", this.scene, false, true, Texture.CUBIC_MODE,()=> {this.parentComponent.loading = false});
         }
         mat.diffuseColor = new Color3(1, 0, 1);
         mat.specularColor = new Color3(0.5, 0.6, 0.87);
