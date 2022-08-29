@@ -32,6 +32,8 @@ class ArtworkDto:
             "width": fields.Integer(required=True),
             "height": fields.Integer(required=True),
             "image_url": fields.String(),
+            "technique": fields.String(required=True),
+            "year": fields.Integer(required=True),
             "sold": fields.Boolean(required=True),
             "added_date": fields.DateTime,
             "position_vector": fields.Nested(vector, allow_null=True),

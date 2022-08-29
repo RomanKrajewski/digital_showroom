@@ -8,6 +8,8 @@
         <v-row>
             <v-text-field class="pl-1" label="Höhe" dense v-model.number="artwork.height" required suffix="cm"></v-text-field>
             <v-text-field class="pl-1" label="Breite" dense v-model.number="artwork.width" required suffix="cm"></v-text-field>
+            <v-text-field class="pl-1" label="Technik" dense v-model="artwork.technique" ></v-text-field>
+            <v-text-field class="pl-1" label="Jahr" dense v-model="artwork.year" ></v-text-field>
         </v-row>
         <v-row>
           <v-checkbox dense v-model="artwork.sold" label="Verkauft"></v-checkbox>
@@ -20,6 +22,8 @@
       <v-card-subtitle>{{artwork.height}} x {{artwork.width}} cm</v-card-subtitle>
       <v-card-subtitle v-if="artwork.sold">Verkauft</v-card-subtitle>
       <v-card-subtitle v-if="!artwork.sold">Verfügbar</v-card-subtitle>
+      <v-card-subtitle> {{artwork.technique}} </v-card-subtitle>
+      <v-card-subtitle> {{artwork.year}} </v-card-subtitle>
     </div>
     <v-container class="pa-0">
       <video v-if="artwork.image_url.endsWith('.mp4')" controls :src="artwork.image_url" style="width: 100%"></video>
@@ -106,6 +110,9 @@ export default {
       const artwork = response.data.artwork
       artwork.height = parseInt(artwork.height)
       artwork.width = parseInt(artwork.width)
+      if (artwork.year){
+        artwork.year = parseInt(artwork.year)
+      }
       if (!artwork.image_url) {
         artwork.image_url = ""
       }

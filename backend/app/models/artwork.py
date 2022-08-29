@@ -18,6 +18,8 @@ class Artwork(Model):
     sold = Column(db.Boolean)
     position_vector_id = Column(db.Integer, db.ForeignKey("vectors.id"))
     orientation_quaternion_id = Column(db.Integer, db.ForeignKey("quaternions.id"))
+    technique = Column(db.String(100))
+    year = Column(db.Integer)
     position_vector = db.relationship("Vector", foreign_keys=[position_vector_id])
     orientation_quaternion = db.relationship("Quaternion", foreign_keys=[orientation_quaternion_id])
     added_date = Column(db.DateTime, default=datetime.utcnow)
