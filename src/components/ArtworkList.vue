@@ -43,7 +43,6 @@ export default {
       this.addingArtwork = true
       },
     artworkUpdated: async function(updating_artwork){
-      console.log(updating_artwork.id)
       console.log(this.artworks.map((artwork) => artwork.id))
 
       if (this.artworks.map((artwork) => artwork.id).indexOf(updating_artwork.id) === -1){

@@ -50,7 +50,6 @@ class Walls{
         scene.onPointerObservable.add((pointerInfo) => {
             if (pointerInfo.type === PointerEventTypes.POINTERMOVE) {
                 if (this.positioningIndicator.isEnabled()) {
-                    console.log("yes")
                     this.positioningIndicator.position = pointerInfo.pickInfo.pickedPoint;
                     const v1 = pointerInfo.pickInfo.getNormal(true)
                     const v2 = new Vector3(0, 0, -1)
@@ -58,8 +57,6 @@ class Walls{
 
                     this.positioningIndicator.rotation = new Vector3(0, 0, 0)
                     this.positioningIndicator.rotate(axisAngle[0], axisAngle[1])
-                }else{
-                    console.log("no")
                 }
 
             }
