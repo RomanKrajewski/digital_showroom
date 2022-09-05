@@ -211,7 +211,7 @@ class Walls{
         let artworkMesh = MeshBuilder.CreateBox('box', options, this.scene);
         const mat = new StandardMaterial("mat", this.scene);
         if(artwork.image_url.endsWith(".mp4")){
-            const videoTexture = new VideoTexture("video", artwork.image_url, this.scene, false, false, Texture.NEAREST_NEAREST)
+            const videoTexture = new VideoTexture("video", artwork.image_url + "?cacheblock=true", this.scene, false, false, Texture.NEAREST_NEAREST)
             videoTexture.onLoadObservable.add(()=> {this.parentComponent.loading = false})
             mat.diffuseTexture = videoTexture
             artworkMesh.videoTexture = videoTexture
