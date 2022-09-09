@@ -8,10 +8,15 @@
         <v-row>
             <v-text-field class="pl-1" label="Höhe" dense v-model.number="artwork.height" required suffix="cm"></v-text-field>
             <v-text-field class="pl-1" label="Breite" dense v-model.number="artwork.width" required suffix="cm"></v-text-field>
-            <v-text-field class="pl-1" label="Technik" dense v-model="artwork.technique" ></v-text-field>
             <v-text-field class="pl-1" label="Jahr" dense v-model="artwork.year" ></v-text-field>
         </v-row>
         <v-row>
+          <v-text-field class="pl-1" label="Technik" dense v-model="artwork.technique" ></v-text-field>
+        </v-row>
+        <v-row>
+          <v-text-field class="pl-1" label="Link" dense v-model="artwork.hyperlink_url"/>
+        </v-row>
+      <v-row>
           <v-checkbox dense v-model="artwork.sold" label="Verkauft"></v-checkbox>
         </v-row>
       <input ref="file" type="file" hidden accept="image/jpeg, video/mp4" @change="uploadFileAWS">
@@ -24,6 +29,7 @@
       <v-card-subtitle v-if="!artwork.sold">Verfügbar</v-card-subtitle>
       <v-card-subtitle> {{artwork.technique}} </v-card-subtitle>
       <v-card-subtitle> {{artwork.year}} </v-card-subtitle>
+      <v-card-subtitle> {{artwork.hyperlink_url}}</v-card-subtitle>
     </div>
     <v-container class="pa-0">
       <video v-if="artwork.image_url.endsWith('.mp4')" controls :src="artwork.image_url" style="width: 100%"></video>
@@ -100,6 +106,7 @@ export default {
           name: null,
           sold: false,
           image_url: "",
+          hyperlink_url:"",
         }
       }else{
         this.artwork = await this.fetchArtworkInfo({id: this.artwork_id})
@@ -115,6 +122,9 @@ export default {
       }
       if (!artwork.image_url) {
         artwork.image_url = ""
+      }
+      if(!artwork.hyperlink_url){
+        artwork.hyperlink_url = ""
       }
       return artwork;
     },

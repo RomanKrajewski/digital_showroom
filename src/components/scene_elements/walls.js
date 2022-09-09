@@ -161,8 +161,13 @@ class Walls{
             artworkMesh.actionManager.registerAction(
                 new ExecuteCodeAction({trigger: ActionManager.OnPickTrigger},
                     () => {
-                        this.parentComponent.cameraTargetArtwork(artworkDetails)
-                        this.parentComponent.focusedArtwork = artworkDetails
+                        if(artworkDetails.hyperlink_url){
+                            window.open(artworkDetails.hyperlink_url)
+                        }
+                        else{
+                            this.parentComponent.cameraTargetArtwork(artworkDetails)
+                            this.parentComponent.focusedArtwork = artworkDetails
+                        }
                     })
             )
             artworkMeshes.push({mesh: artworkMesh, artwork: artworkDetails} )

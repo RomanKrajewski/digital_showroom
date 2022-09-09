@@ -33,6 +33,7 @@ class ArtworkDto:
             "height": fields.Integer(required=True),
             "image_url": fields.String(),
             "technique": fields.String(required=True),
+            "hyperlink_url":fields.String(),
             "year": fields.Integer(required=True),
             "sold": fields.Boolean(required=True),
             "added_date": fields.DateTime,

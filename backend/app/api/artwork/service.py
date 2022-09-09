@@ -73,8 +73,9 @@ class ArtworkService:
         sold = data["sold"]
         technique = data["technique"]
         year = data["year"]
+        hyperlink_url = data["hyperlink_url"]
         try:
-            new_artwork = Artwork(name=name, width=width, height=height, image_url=image_url, sold=sold, technique=technique, year=year)
+            new_artwork = Artwork(name=name, width=width, height=height, image_url=image_url, sold=sold, technique=technique, year=year, hyperlink_url=hyperlink_url)
 
             db.session.add(new_artwork)
             db.session.flush()
@@ -128,6 +129,7 @@ class ArtworkService:
         sold = data["sold"]
         technique = data["technique"]
         year=data["year"]
+        hyperlink_url=data["hyperlink_url"]
 
         try:
             if not (artwork := Artwork.query.filter_by(id=artwork_id).first()):
@@ -139,6 +141,7 @@ class ArtworkService:
             artwork.image_url = image_url
             artwork.year = year
             artwork.technique = technique
+            artwork.hyperlink_url = hyperlink_url
 
             if position_vector := data.get("position_vector", None):
                 if not artwork.position_vector: #add a position vector and save the values
