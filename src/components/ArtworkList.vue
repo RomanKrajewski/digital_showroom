@@ -1,8 +1,12 @@
 <template>
    <v-row ref="root" id="artworkList" class="pa-2">
-     <v-overlay v-model="addingArtwork" contained class="justify-center align-center" content-class="width-90">
-        <artwork-info class="flex-grow-1" @artwork-updated="artworkUpdated" @editing-aborted="addingArtwork = false"></artwork-info>
-     </v-overlay>
+     <v-dialog v-model="addingArtwork" contained class="justify-center align-center" content-class="width-90" scrollable>
+       <v-card class="ma-0 pa-0">
+         <v-card-text style="height:708px" class="ma-0 pa-0">
+           <artwork-info @artwork-updated="artworkUpdated" @editing-aborted="addingArtwork = false"/>
+         </v-card-text>
+       </v-card>
+     </v-dialog>
         <v-col v-for="artwork in artworks" :key="artwork.id" cols="12">
           <artwork-info @artwork-updated="artworkUpdated" @positioning="(positioning_artwork) => $emit('positioning', positioning_artwork)" @artwork-deleted="removeArtworkFromList(artwork)" :artwork_id="artwork.id"></artwork-info>
         </v-col>

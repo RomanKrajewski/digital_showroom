@@ -20,7 +20,6 @@
           <v-checkbox dense v-model="artwork.sold" label="Verkauft"></v-checkbox>
         </v-row>
       <input ref="file" type="file" hidden accept="image/jpeg, video/mp4" @change="uploadFileAWS">
-
     </v-form>
     <div v-if="!editing" class="pa-1">
       <v-card-title>{{ artwork.name }}</v-card-title>
@@ -193,6 +192,5 @@ p{
   justify-content: center;
   align-items: center
 }
-
 
 </style>
