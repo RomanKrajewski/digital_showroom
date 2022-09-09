@@ -135,15 +135,6 @@ class Walls{
             artworkMesh.rotationQuaternion = new Quaternion(artworkDetails.orientation_quaternion.x, artworkDetails.orientation_quaternion.y, artworkDetails.orientation_quaternion.z, artworkDetails.orientation_quaternion.w)
 
             artworkMesh.actionManager = new ActionManager(this.scene);
-            if (artworkMesh.videoTexture){
-                artworkMesh.actionManager.registerAction(new ExecuteCodeAction({trigger: ActionManager.OnPickTrigger}, () => {
-                    if(artworkMesh.videoTexture.video.paused){
-                        artworkMesh.videoTexture.video.play()
-                    }else{
-                        artworkMesh.videoTexture.video.muted = !artworkMesh.videoTexture.video.muted
-                    }
-                }))
-            }
 
             artworkMesh.actionManager.registerAction(
                 new ExecuteCodeAction({trigger: ActionManager.OnPointerOverTrigger},
@@ -167,6 +158,16 @@ class Walls{
                         else{
                             this.parentComponent.cameraTargetArtwork(artworkDetails)
                             this.parentComponent.focusedArtwork = artworkDetails
+
+                            if (artworkMesh.videoTexture){
+                                artworkMesh.actionManager.registerAction(new ExecuteCodeAction({trigger: ActionManager.OnPickTrigger}, () => {
+                                    if(artworkMesh.videoTexture.video.paused){
+                                        artworkMesh.videoTexture.video.play()
+                                    }else{
+                                        artworkMesh.videoTexture.video.muted = false
+                                    }
+                                }))
+                            }
                         }
                     })
             )
@@ -177,6 +178,12 @@ class Walls{
 
     updateArtwork = (artwork) => {
         this.loadArtworks([artwork.id])
+    }
+
+    muteArtworks = () =>{
+        this.loadedArtworks.filter(artwork => artwork.mesh.videoTexture).forEach(artwork => {
+            console.log(artwork)
+            artwork.mesh.videoTexture.video.muted = true})
     }
 
     positionArtwork = (artworkToPosition) =>  {

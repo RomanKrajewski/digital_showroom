@@ -125,6 +125,14 @@ export default {
       this.teleportingCamera.targetArtwork(artwork)
     },
 
+  },
+  watch:{
+    focusedArtwork(newArtwork, oldArtwork){
+      if(!newArtwork && oldArtwork !== newArtwork){
+        this.walls.muteArtworks()
+
+      }
+    }
   }
 
 }
