@@ -17,12 +17,13 @@ class TeleportingCamera {
 
         this.scene = scene;
         this.canvas = scene.getEngine().getRenderingCanvas();
-        this.camera = new FreeCamera("camera", new Vector3(0, CAMERA_DEFAULT_HEIGHT, 0),this.scene);
+        this.camera = new FreeCamera("camera", new Vector3(-2.9157987217340215, CAMERA_DEFAULT_HEIGHT, 13.435207087359332),this.scene);
+
+        this.camera.rotation.y = 2.5360430713143924
 
         this.camera.attachControl(this.canvas, true);
         this.camera.minZ = 0.1
         this.camera.fov = FOV
-        this.camera.rotation.y = Math.PI
         this.cameraHeightAnimationRunning = false;
         this.cameraTargetHeightAnimationRunning = false;
 
