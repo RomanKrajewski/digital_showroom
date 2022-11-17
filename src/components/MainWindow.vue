@@ -15,8 +15,9 @@
             <artwork-list @artwork-updated="updateArtwork" @positioning="initPositioningArtwork" v-if="show_navigation"></artwork-list>
             <login-form v-if="show_login"></login-form>
           </v-col>
-          <artwork-hover-info cols="12" sm="6" md="4" xl="2" v-if="hoveringArtwork && !focusedArtwork " :artwork="hoveringArtwork" ></artwork-hover-info>
-          <artwork-focus-info cols="12" sm="6" md="4" xl="2" v-if="focusedArtwork" :artwork="focusedArtwork"></artwork-focus-info>
+          <artwork-hover-info v-if="hoveringArtwork && !focusedArtwork " :artwork="hoveringArtwork" ></artwork-hover-info>
+          <artwork-focus-info v-if="focusedArtwork" :artwork="focusedArtwork"></artwork-focus-info>
+          <tutorial-dialogue id="tutorialDialogue" cols="12" sm="6" md="4" xl="2" class="ma-0 pa-0"></tutorial-dialogue>
         </v-row>
       </v-container>
   </div>
@@ -39,10 +40,11 @@ import {PointerEventTypes} from "@babylonjs/core/Events/pointerEvents"
 import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader"
 
 import "@babylonjs/loaders/glTF"
+import TutorialDialogue from "@/components/TutorialDialogue";
 export default {
 
   name: 'MainWindow',
-  components: {ArtworkHoverInfo, LoginForm, ArtworkList, ArtworkFocusInfo},
+  components: {TutorialDialogue, ArtworkHoverInfo, LoginForm, ArtworkList, ArtworkFocusInfo},
   props:['show_navigation', 'show_login'],
   data: function (){
     return {
@@ -148,6 +150,12 @@ export default {
   background: white;
   height: 100vh;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+#tutorialDialogue{
+  position: fixed;
+  background: white;
+  bottom: 20px;
+  right: 20px;
 }
 canvas{
   width:100vw;
