@@ -17,7 +17,10 @@
           </v-col>
           <artwork-hover-info v-if="hoveringArtwork && !focusedArtwork " :artwork="hoveringArtwork" ></artwork-hover-info>
           <artwork-focus-info v-if="focusedArtwork" :artwork="focusedArtwork"></artwork-focus-info>
-          <tutorial-dialogue id="tutorialDialogue" cols="12" sm="6" md="4" xl="2" class="ma-0 pa-0"></tutorial-dialogue>
+          <v-btn id="tutorialButton" icon variant="flat" color="transparent" v-on:click="show_tutorial=true">
+            <v-icon>mdi-help</v-icon>
+          </v-btn>
+          <tutorial-dialogue v-if="show_tutorial" @close-tutorial="show_tutorial=false" id="tutorialDialogue" cols="10" sm="5" md="3" xl="2" class="ma-0 pa-0"></tutorial-dialogue>
         </v-row>
       </v-container>
   </div>
@@ -55,6 +58,7 @@ export default {
       teleportingCamera: null,
       pointerDown: false,
       loading: false,
+      show_tutorial:true
     }
   },
   mounted() {
@@ -154,6 +158,11 @@ export default {
 #tutorialDialogue{
   position: fixed;
   background: white;
+  bottom: 20px;
+  right: 20px;
+}
+#tutorialButton{
+  position: fixed;
   bottom: 20px;
   right: 20px;
 }
