@@ -31,15 +31,6 @@ class DevelopmentConfig(Config):
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Add logger
-class TestingConfig(Config):
-    DEBUG = True
-    TESTING = True
-    # In-memory SQLite for testing
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
-    PRESERVE_CONTEXT_ON_EXCEPTION = False
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
 
 class ProductionConfig(Config):
     DEBUG = False
@@ -51,7 +42,6 @@ class ProductionConfig(Config):
 
 config_by_name = dict(
     development=DevelopmentConfig,
-    testing=TestingConfig,
     production=ProductionConfig,
     default=DevelopmentConfig,
 )

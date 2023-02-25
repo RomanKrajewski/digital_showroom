@@ -24,7 +24,7 @@ class AuthLogin(Resource):
     auth_login = AuthDto.auth_login
 
     @api.doc(
-        "Auth login",
+        "Login using email and password ",
         responses={
             200: ("Logged in", auth_success),
             400: "Validations failed.",
@@ -48,11 +48,13 @@ class AuthLogin(Resource):
 class AuthLogout(Resource):
 
     @api.doc(
+        "User Logout",
         responses = {
-            200: {"Successfully logged out"}
+            200: "Successfully logged out"
         },
     )
     def get(self):
+        """ Unset the access cookie of the current user """
         return AuthService.logout()
 
 @api.route("/register")
